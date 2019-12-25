@@ -1,0 +1,22 @@
+{
+  "name": "babymonitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel client/index.html",
+    "build": "parcel build client/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^1.12.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-ws": "^4.0.0",
+    "raspivid-stream": "^0.2.1",
+    "ws-avc-player": "^2.0.2"
+  }
+}
