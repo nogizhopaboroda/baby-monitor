@@ -11,3 +11,7 @@ window.wsavc = wsavc;
 
 const canvas = document.body.appendChild(wsavc.AvcPlayer.canvas);
 document.body.appendChild(canvas);
+
+
+const audioElement = new Audio(`http://${HOST}:${PORT}/audio`);
+document.body.appendChild(audioElement);
