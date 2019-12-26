@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const { PORT } = process.env;
+const {PORT} = process.env;
 
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err);
@@ -18,11 +18,11 @@ const wss = require('express-ws')(app);
 const mic = require('mic');
 
 const micInstance = mic({
-    rate: '16000',
-    channels: '1',
-    fileType: 'wav',
-    debug: false,
-    exitOnSilence: 6
+  rate: '16000',
+  channels: '1',
+  fileType: 'wav',
+  debug: false,
+  exitOnSilence: 6,
 });
 
 const micInputStream = micInstance.getAudioStream();
@@ -49,6 +49,7 @@ app.ws('/video-stream', (ws, req) => {
 });
 
 app.get('/audio', (req, res) => {
+  res.writeHead(200, {'Content-Type': 'audio/wav'});
   micInputStream.pipe(res);
 });
 
@@ -62,8 +63,8 @@ app.ws('/audio-stream', (ws, req) => {
   });
 
   // ws.on('close', () => {
-    // console.log('Audio Client left');
-    // stop piping
+  // console.log('Audio Client left');
+  // stop piping
   // });
 });
 
