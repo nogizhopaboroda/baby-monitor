@@ -18,6 +18,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
+    "mic": "^2.1.2",
     "raspivid-stream": "^0.2.1",
     "ws-avc-player": "^2.0.2"
   }
