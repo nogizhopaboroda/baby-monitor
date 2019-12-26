@@ -1,6 +1,7 @@
 import WSAvcPlayer from 'ws-avc-player';
 
-const {HOST = window.location.hostname, PORT = window.location.port} = process.env;
+const HOST = process.env.HOST || window.location.hostname;
+const PORT = process.env.PORT || window.location.port;
 
 // Create h264 player
 var uri = `ws://${HOST}:${PORT}/video-stream`;
