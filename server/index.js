@@ -1,3 +1,9 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const { PORT } = process.env;
+
 process.on('uncaughtException', function(err) {
   console.log('Caught exception: ' + err);
   console.log(err.stack);
@@ -9,7 +15,7 @@ const raspividStream = require('raspivid-stream');
 const app = express();
 const wss = require('express-ws')(app);
 
-app.get('/', (req, res) => res.sendFile(__dirname + '/dist/index.html'));
+app.get('/', (req, res) => res.sendFile(process.cwd() + '/dist/index.html'));
 app.use(express.static('dist'));
 
 app.ws('/video-stream', (ws, req) => {
@@ -34,4 +40,4 @@ app.use(function(err, req, res, next) {
   next(err);
 });
 
-app.listen(8070, () => console.log('Server started on 80'));
+app.listen(PORT, () => console.log(`Server started on ${PORT}`));
