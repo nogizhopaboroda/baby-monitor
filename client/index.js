@@ -16,4 +16,5 @@ document.body.appendChild(canvas);
 
 const audioElement = new Audio(`http://${HOST}:${PORT}/audio`);
 audioElement.controls = true;
+audioElement.preload = 'none';
 document.body.appendChild(audioElement);

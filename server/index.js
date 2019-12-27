@@ -16,18 +16,9 @@ const app = express();
 const wss = require('express-ws')(app);
 const websocketStream = require('websocket-stream/stream');
 
-const mic = require('mic');
+const createMicrophoneStream = require('../lib/microphone');
 
-const micInstance = mic({
-  rate: '16000',
-  channels: '1',
-  fileType: 'wav',
-  debug: false,
-  exitOnSilence: 6,
-});
-
-const micInputStream = micInstance.getAudioStream();
-micInstance.start();
+const micInputStream = createMicrophoneStream();
 
 app.get('/', (req, res) => res.sendFile(process.cwd() + '/dist/index.html'));
 app.use(express.static('dist'));
@@ -51,7 +42,15 @@ app.ws('/video-stream', (ws, req) => {
 
 app.get('/audio', (req, res) => {
   res.writeHead(200, {'Content-Type': 'audio/wav'});
-  micInputStream.pipe(res);
+  console.log('Client connected')
+  const writeChunk = (data) => {
+    res.write(data);
+  };
+  micInputStream.stdout.on('data', writeChunk);
+  res.on('close',function(){
+    console.log('Client left')
+    micInputStream.stdout.off('data', writeChunk);
+  })
 });
 
 app.ws('/audio-stream', (ws, req) => {
@@ -60,7 +59,10 @@ app.ws('/audio-stream', (ws, req) => {
     // websocket-stream options here
     binary: false,
   });
-  micInputStream.pipe(stream);
+  micInputStream.stdout.on('data', (data) => {
+    console.log('sending mic data to socket');
+    ws.send(data);
+  });
 
   // ws.on('close', () => {
   // console.log('Audio Client left');
