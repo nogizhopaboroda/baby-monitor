@@ -14,6 +14,7 @@ const raspividStream = require('raspivid-stream');
 
 const app = express();
 const wss = require('express-ws')(app);
+const websocketStream = require('websocket-stream/stream');
 
 const mic = require('mic');
 
@@ -55,12 +56,11 @@ app.get('/audio', (req, res) => {
 
 app.ws('/audio-stream', (ws, req) => {
   console.log('Audio Client connected');
-
-  micInputStream.on('data', function(data) {
-    ws.send(data, {binary: true}, error => {
-      if (error) console.error(error);
-    });
+  const stream = websocketStream(ws, {
+    // websocket-stream options here
+    binary: false,
   });
+  micInputStream.pipe(stream);
 
   // ws.on('close', () => {
   // console.log('Audio Client left');
