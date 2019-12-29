@@ -1,5 +1,6 @@
 import WSAvcPlayer from 'ws-avc-player';
 import PCMPlayer from './pcm-player';
+import createVisualiser from './visualiser';
 
 const HOST = process.env.HOST || window.location.hostname;
 const PORT = process.env.PORT || window.location.port;
@@ -22,6 +23,11 @@ const player = new PCMPlayer({
   sampleRate: 44100,
   flushingTime: 0
 });
+
+const visualisationCanvas = createVisualiser(player.gainNode, player.audioCtx);
+
+document.body.appendChild(visualisationCanvas);
+
 
 const audioStreamUrl = `ws://${HOST}:${PORT}/audio-stream`;
 
