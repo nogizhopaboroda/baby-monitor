@@ -25,16 +25,11 @@ const player = new PCMPlayer({
 
 const audioStreamUrl = `ws://${HOST}:${PORT}/audio-stream`;
 
-const button = document.createElement('button');
-button.innerHTML = 'play';
-document.body.appendChild(button);
-button.addEventListener('click', () => {
-  var ws = new WebSocket(audioStreamUrl);
-  ws.binaryType = 'arraybuffer';
-  ws.addEventListener('message',function(event) {
-    const data = new Uint8Array(event.data);
-    player.feed(data);
-  });
+var ws = new WebSocket(audioStreamUrl);
+ws.binaryType = 'arraybuffer';
+ws.addEventListener('message',function(event) {
+  const data = new Uint8Array(event.data);
+  player.feed(data);
 });
 
 

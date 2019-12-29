@@ -50,7 +50,6 @@ PCMPlayer.prototype.createContext = function() {
   this.gainNode = this.audioCtx.createGain();
   this.gainNode.gain.value = 1;
   this.gainNode.connect(this.audioCtx.destination);
-  this.startTime = this.audioCtx.currentTime;
 };
 
 PCMPlayer.prototype.isTypedArray = function(data) {
@@ -125,20 +124,8 @@ PCMPlayer.prototype.flush = function() {
     }
   }
 
-  if (this.startTime < this.audioCtx.currentTime) {
-    this.startTime = this.audioCtx.currentTime;
-  }
-  console.log(
-    'start vs current ' +
-      this.startTime +
-      ' vs ' +
-      this.audioCtx.currentTime +
-      ' duration: ' +
-      audioBuffer.duration,
-  );
   bufferSource.buffer = audioBuffer;
   bufferSource.connect(this.gainNode);
-  bufferSource.start(this.startTime);
-  this.startTime += audioBuffer.duration;
+  bufferSource.start(this.audioCtx.currentTime);
   this.samples = new Float32Array();
 };
