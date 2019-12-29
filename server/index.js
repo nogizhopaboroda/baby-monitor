@@ -23,7 +23,7 @@ const micInstance = mic({
   rate: '44100',
   channels: '1',
   fileType: 'wav',
-  debug: true,
+  debug: false,
   exitOnSilence: 6,
 });
 
@@ -37,7 +37,7 @@ app.use(express.static('dist'));
 app.ws('/video-stream', (ws, req) => {
   console.log('Client connected');
 
-  var videoStream = raspividStream();
+  const videoStream = raspividStream();
 
   videoStream.on('data', data => {
     ws.send(data, {binary: true}, error => {
