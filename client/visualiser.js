@@ -67,8 +67,12 @@ function volumeAudioProcess(event) {
   this.volume = Math.max(rms, this.volume * this.averaging);
 }
 
-const createVisualiser = (stream, audioContext) => {
-  const canvas = document.createElement('canvas');
+const createVisualiser = (options = {}) => {
+  const {
+    stream,
+    audioContext,
+    canvas = document.createElement('canvas'),
+  } = options;
   const canvasContext = canvas.getContext('2d');
 
   canvas.height = 50;
@@ -91,8 +95,6 @@ const createVisualiser = (stream, audioContext) => {
     // check if we're currently clipping
     if (meter.checkClipping()) canvasContext.fillStyle = 'red';
     else canvasContext.fillStyle = 'green';
-
-    console.log(meter.volume);
 
     // draw a bar based on the current volume
     canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);

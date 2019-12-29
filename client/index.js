@@ -5,15 +5,17 @@ import createVisualiser from './visualiser';
 const HOST = process.env.HOST || window.location.hostname;
 const PORT = process.env.PORT || window.location.port;
 
+const $appContainer = document.querySelector('#app-container');
+
 // Create h264 player
 var uri = `ws://${HOST}:${PORT}/video-stream`;
 var wsavc = new WSAvcPlayer();
 wsavc.connect(uri);
-//expose instance for button callbacks
+//expose instance for debugging
 window.wsavc = wsavc;
 
-const canvas = document.body.appendChild(wsavc.AvcPlayer.canvas);
-document.body.appendChild(canvas);
+const canvas = wsavc.AvcPlayer.canvas;
+$appContainer.appendChild(canvas);
 
 
 
@@ -23,10 +25,17 @@ const player = new PCMPlayer({
   sampleRate: 44100,
   flushingTime: 0
 });
+window.player = player;
+//expose instance for debugging
 
-const visualisationCanvas = createVisualiser(player.gainNode, player.audioCtx);
+const $audioLevel = document.querySelector('#audio-level');
+const $visualisationCanvas = createVisualiser({
+  stream: player.gainNode,
+  audioContext: player.audioCtx,
+  canvas: $audioLevel,
+});
 
-document.body.appendChild(visualisationCanvas);
+// $appContainer.appendChild($visualisationCanvas);
 
 
 const audioStreamUrl = `ws://${HOST}:${PORT}/audio-stream`;
