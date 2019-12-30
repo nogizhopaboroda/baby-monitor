@@ -1,0 +1,22 @@
+#! /bin/sh
+# /etc/init.d/baby-monitor-service
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting baby monitor server"
+    # run application you want to start
+    /home/pi/baby-monitor/scripts/baby-monitor
+    ;;
+  stop)
+    echo "Stopping baby monitor server"
+    # kill application you want to stop
+    killall baby-monitor
+    ;;
+  *)
+    echo "Usage: /etc/init.d/baby-monitor-service {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
