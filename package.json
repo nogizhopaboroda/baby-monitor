@@ -21,6 +21,7 @@
     "mic": "^2.1.2",
     "raspivid-stream": "^0.2.1",
     "websocket-stream": "^5.5.0",
+    "ws": "^7.2.1",
     "ws-avc-player": "^2.0.2"
   }
 }
