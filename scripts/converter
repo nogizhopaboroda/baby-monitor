@@ -2,7 +2,7 @@
 
 const Splitter = require('stream-split');
 
-const NALseparator = new Buffer([0,0,0,1]);
+const NALseparator = new Buffer.from([0,0,0,1]);
 
 const liveStream = process.stdin.pipe(new Splitter(NALseparator));
 
