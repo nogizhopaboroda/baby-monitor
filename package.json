@@ -15,12 +15,8 @@
     "parcel": "^1.12.4"
   },
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-ws": "^4.0.0",
-    "mic": "^2.1.2",
-    "raspivid-stream": "^0.2.1",
-    "websocket-stream": "^5.5.0",
+    "stream-concat": "^0.3.0",
+    "stream-split": "^1.1.0",
     "ws-avc-player": "^2.0.2"
   }
 }
