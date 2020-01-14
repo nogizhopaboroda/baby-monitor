@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+
+/*
+ *  Usage:
+ *  stdin_distributor [duplicated_fifo_1 duplicated_fifo2 ...] < source_fifo
+ * */
+
+const fs = require('fs');
+
+
+console.log('initialising');
+
+const targets = process.argv.slice(2);
+
+const duplicateStream = (fileName) => {
+  console.log(`creating stream: stdin -> ${fileName}`);
+  const writeStream = fs.createWriteStream(fileName);
+  const pipedWriteStream = process.stdin.pipe(writeStream);
+
+  pipedWriteStream.on('error', (e) => {
+    console.log(`consumer of "${fileName}" disconnected`);
+    process.stdin.unpipe(writeStream);
+    duplicateStream(fileName);
+  });
+}
+
+targets.forEach(duplicateStream);
+
