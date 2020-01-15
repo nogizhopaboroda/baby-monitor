@@ -5,12 +5,15 @@ SHELL ["/bin/bash", "-l", "-c"]
 
 RUN apt-get update && \
     apt-get -qy install \
-        curl git make alsa-utils \
+        curl git make alsa-utils build-essential \
         tmux
 
 
+#install mon
+RUN mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/tj/mon/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mon
+
 #install mongroup
-RUN cd `mktemp -d` && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install
+RUN mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mongroup
 
 # install websocat
 RUN sudo curl -L https://github.com/vi/websocat/releases/download/v2.0.0-alpha0/websocat_arm-linux-static -o /usr/local/bin/websocat
@@ -31,3 +34,5 @@ WORKDIR /baby-monitor
 
 RUN nvm install
 RUN npm install
+
+ENTRYPOINT ["bash", "./entrypoint.sh"]
