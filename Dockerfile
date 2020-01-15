@@ -8,9 +8,6 @@ RUN apt-get update && \
         curl git make alsa-utils \
         tmux
 
-#install node
-# RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
-# RUN apt-get install -y nodejs
 
 #install mongroup
 RUN cd `mktemp -d` && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install
@@ -32,6 +29,5 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | b
 ADD . /baby-monitor
 WORKDIR /baby-monitor
 
-RUN ls -la
-RUN nvm -v
-# RUN nvm install
+RUN nvm install
+RUN npm install
