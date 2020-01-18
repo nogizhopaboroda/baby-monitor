@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ "$EMULATE_STREAM_SERVICES" = "true" ]; then
+  echo "Runing in emulation mode"
+  while :
+  do
+    echo $RANDOM
+    sleep 5
+  done
+
+else
+  echo "Runing in real mode"
+  while :
+  do
+    date
+    sleep 10
+  done
+fi
+
