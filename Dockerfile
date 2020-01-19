@@ -6,7 +6,8 @@ SHELL ["/bin/bash", "-l", "-c"]
 
 RUN apt-get update && \
     apt-get -qy install \
-        curl git make alsa-utils build-essential \
+        curl git make build-essential \
+        alsa-utils ffmpeg \
         tmux
 
 
