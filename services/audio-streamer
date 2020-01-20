@@ -4,8 +4,7 @@ if [ "$EMULATE_STREAM_SERVICES" = "true" ]; then
   echo "Runing in emulation mode"
   while :
   do
-    echo $RANDOM
-    sleep 5
+    ffmpeg -f lavfi -i "sine=frequency=1000" -ac 2 output.wav
   done
 
 else
