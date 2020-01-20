@@ -1,7 +1,5 @@
 FROM balenalib/raspberrypi3
 
-ENV EMULATE_STREAM_SERVICES=false
-
 SHELL ["/bin/bash", "-l", "-c"]
 
 RUN apt-get update && \

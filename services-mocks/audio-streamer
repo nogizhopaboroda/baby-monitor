@@ -1,0 +1,4 @@
+#!/bin/sh
+
+ffmpeg -f lavfi -i "sine=frequency=1000" -ac 2 output.wav
+

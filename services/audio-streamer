@@ -1,18 +1,4 @@
 #!/bin/sh
 
-if [ "$EMULATE_STREAM_SERVICES" = "true" ]; then
-  echo "Runing in emulation mode"
-  while :
-  do
-    ffmpeg -f lavfi -i "sine=frequency=1000" -ac 2 output.wav
-  done
-
-else
-  echo "Runing in real mode"
-  while :
-  do
-    date
-    sleep 10
-  done
-fi
+arecord -c 1 -r 44100 -f S16_LE -D plughw:1,0
 
