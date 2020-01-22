@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^1.12.4"
+    "parcel": "^1.12.4",
+    "stream-throttle": "^0.1.3"
   },
   "dependencies": {
     "broadway-player": "^0.1.1",

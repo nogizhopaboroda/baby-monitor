@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const Throttle  = require('stream-throttle').Throttle;
+
+const source = process.argv[2];
+const target = process.argv[3];
+
+//throttle for "real time simulation"
+const sourceThrottleRate = Math.floor(fs.statSync(source)['size'] / 58);
+console.log(`Generate a static feed from ${source}`);
+console.log(`Generate a throttle rate of ${Math.floor(sourceThrottleRate / 1024)} kBps`);
+console.log(`writing stream to ${target}`);
+
+function initStream(){
+  const writeStream = fs.createWriteStream(target);
+  const readStream = fs.createReadStream(source).pipe(new Throttle({rate: sourceThrottleRate}));
+  readStream.pipe(writeStream);
+  readStream.on('end', () => {
+    console.log('restarting stream');
+    readStream.unpipe(writeStream);
+    initStream();
+  });
+}
+
+initStream();
