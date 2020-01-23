@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel client/index.html",
     "build": "parcel build client/index.html",
     "server": "node server/index.js"
@@ -12,12 +11,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^1.12.4",
-    "stream-throttle": "^0.1.3"
+    "parcel": "^1.12.4"
   },
   "dependencies": {
     "broadway-player": "^0.1.1",
-    "stream-concat": "^0.3.0",
     "stream-split": "^1.1.0",
     "ws-avc-player": "^2.0.2"
   }

@@ -5,6 +5,7 @@ SHELL ["/bin/bash", "-l", "-c"]
 RUN apt-get update && \
     apt-get -qy install \
         curl git make build-essential \
+        python python-pip \
         alsa-utils ffmpeg \
         tmux
 
@@ -33,6 +34,7 @@ ADD . /baby-monitor
 WORKDIR /baby-monitor
 
 RUN nvm install
-RUN npm install
+RUN npm install --loglevel verbose
+RUN npm run build
 
 ENTRYPOINT ["bash", "./entrypoint.sh"]
