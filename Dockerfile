@@ -30,9 +30,10 @@ RUN chmod +x /usr/local/bin/gotty
 #install nvm
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
 
-RUN mkdir /streams
-RUN cd /streams && mkfifo video-stream-main.h264 video-stream-web.h264 video-stream-1.h264 \
-                          audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
+#create named pipes for streams
+RUN mkdir /streams && cd /streams && \
+    mkfifo video-stream-main.h264 video-stream-web.h264 video-stream-1.h264 \
+           audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
 
 ADD . /baby-monitor
 WORKDIR /baby-monitor
