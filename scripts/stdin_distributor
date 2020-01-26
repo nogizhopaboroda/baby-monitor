@@ -16,11 +16,14 @@ const targets = process.argv.slice(2);
 const duplicateStream = (fileName) => {
   console.log(`creating stream: stdin -> ${fileName}`);
   const writeStream = fs.createWriteStream(fileName);
-  const pipedWriteStream = process.stdin.pipe(writeStream);
 
-  pipedWriteStream.on('error', (e) => {
+  const writeToStream = data => writeStream.write(data);
+
+  process.stdin.on('data', writeToStream);
+
+  writeStream.on('error', (e) => {
     console.log(`consumer of "${fileName}" disconnected`);
-    process.stdin.unpipe(writeStream);
+    process.stdin.off('data', writeToStream);
     duplicateStream(fileName);
   });
 }
