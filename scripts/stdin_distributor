@@ -11,22 +11,29 @@ const fs = require('fs');
 
 console.log('initialising');
 
-const targets = process.argv.slice(2);
+const source = process.argv[2];
+const targets = process.argv.slice(3);
+
+const readStream = fs.createReadStream(source);
 
 const duplicateStream = (fileName) => {
-  console.log(`creating stream: stdin -> ${fileName}`);
+  console.log(`creating stream: ${source} -> ${fileName}`);
   const writeStream = fs.createWriteStream(fileName);
 
   const writeToStream = data => writeStream.write(data);
 
-  process.stdin.on('data', writeToStream);
+  readStream.on('data', writeToStream);
 
   writeStream.on('error', (e) => {
     console.log(`consumer of "${fileName}" disconnected`);
-    process.stdin.off('data', writeToStream);
+    readStream.off('data', writeToStream);
     duplicateStream(fileName);
   });
 }
 
 targets.forEach(duplicateStream);
 
+readStream.on('end', () => {
+  console.log('exiting');
+  process.kill( process.pid, 'SIGTERM' );
+});

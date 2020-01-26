@@ -33,10 +33,13 @@ RUN mkdir /streams && cd /streams && \
            audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
 
 
-ADD . /baby-monitor
+ADD package.json /baby-monitor
 WORKDIR /baby-monitor
-
 RUN npm install
+
+
+ADD . /baby-monitor
+
 RUN npm run build
 
 ENTRYPOINT ["./entrypoint.sh"]

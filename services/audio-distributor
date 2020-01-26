@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./scripts/stdin_distributor /streams/audio-stream-web.wav /streams/audio-stream-1.wav < /streams/audio-stream-main.wav
+./scripts/stdin_distributor /streams/audio-stream-main.wav /streams/audio-stream-web.wav /streams/audio-stream-1.wav
