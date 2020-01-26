@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./scripts/stdin_distributor /streams/video-stream-web.h264 /streams/video-stream-1.h264 < /streams/video-stream-main.h264

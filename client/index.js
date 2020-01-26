@@ -8,7 +8,7 @@ const PORT = process.env.PORT || window.location.port;
 const $appContainer = document.querySelector('#app-container');
 
 // Create h264 player
-var uri = `ws://${HOST}:${PORT}/video-stream`;
+var uri = `ws://127.0.0.1:8001`;
 var wsavc = new WSAvcPlayer();
 wsavc.connect(uri);
 //expose instance for debugging
@@ -38,7 +38,7 @@ const $visualisationCanvas = createVisualiser({
 // $appContainer.appendChild($visualisationCanvas);
 
 
-const audioStreamUrl = `ws://${HOST}:${PORT}/audio-stream`;
+const audioStreamUrl = `ws://127.0.0.1:8000`;
 
 var ws = new WebSocket(audioStreamUrl);
 ws.binaryType = 'arraybuffer';

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# ./scripts/stream_nal_splitter < /streams/video-stream-web.h264 | websocat --binary -s 0.0.0.0:8001
+websocat --exit-on-eof --binary ws-l:0.0.0.0:8001 cmd:"./scripts/stream_nal_splitter < /streams/video-stream-web.h264"

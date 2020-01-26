@@ -1,0 +1,4 @@
+#!/bin/sh
+
+websocat --binary -s 0.0.0.0:8000 < /streams/audio-stream-web.wav
+
