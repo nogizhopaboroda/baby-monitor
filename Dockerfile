@@ -1,10 +1,9 @@
 FROM balenalib/raspberrypi3
 
-SHELL ["/bin/bash", "-l", "-c"]
-
 RUN apt-get update && \
     apt-get -qy install \
         curl git make build-essential \
+        nodejs npm \
         python python-pip \
         alsa-utils ffmpeg \
         tmux
@@ -27,19 +26,17 @@ RUN curl https://getcaddy.com | bash -s personal
 RUN curl -L# https://github.com/yudai/gotty/releases/download/v2.0.0-alpha.3/gotty_2.0.0-alpha.3_linux_arm.tar.gz | tar zx --strip 1 -C /usr/local/bin/
 RUN chmod +x /usr/local/bin/gotty
 
-#install nvm
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
 
 #create named pipes for streams
 RUN mkdir /streams && cd /streams && \
     mkfifo video-stream-main.h264 video-stream-web.h264 video-stream-1.h264 \
            audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
 
+
 ADD . /baby-monitor
 WORKDIR /baby-monitor
 
-RUN nvm install
-RUN npm install --loglevel verbose
+RUN npm install
 RUN npm run build
 
-ENTRYPOINT ["bash", "./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
