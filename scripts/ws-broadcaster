@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const WebSocket = require('ws');
+
+const argv = require('optimist')
+    .usage('Broadcasts input stream over websockets\nUsage: $0')
+    .options('i', {
+      alias : 'input',
+      describe: 'Input file',
+      demand: true,
+    })
+    .options('p', {
+      alias : 'port',
+      describe: 'server port',
+      default: 8080,
+    })
+    .argv;
+
+
+console.log('initialising');
+
+const source = argv.input;
+const port = argv.port;
+
+const wss = new WebSocket.Server({ port });
+
+const readStream = fs.createReadStream(source);
+
+
+wss.on('connection', function connection(ws) {
+  console.log('client connected');
+
+  const writeToSocket = data => ws.send(data, { binary: true });
+
+  readStream.on('data', writeToSocket);
+
+  ws.on('close', function close() {
+    console.log('client disconnected');
+    readStream.off('data', writeToSocket);
+  });
+
+  ;
+});
+
+readStream.on('end', () => {
+  console.log('exiting');
+  process.kill( process.pid, 'SIGTERM' );
+});

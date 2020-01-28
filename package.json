@@ -17,6 +17,7 @@
     "broadway-player": "^0.1.1",
     "optimist": "^0.6.1",
     "stream-split": "^1.1.0",
+    "ws": "^7.2.1",
     "ws-avc-player": "^2.0.2"
   }
 }
