@@ -1,5 +1,9 @@
 FROM balenalib/raspberrypi3
 
+
+ENV WORKDIR /baby-monitor
+
+
 RUN apt-get update && \
     apt-get -qy install \
         curl git make build-essential \
@@ -33,12 +37,12 @@ RUN mkdir /streams && cd /streams && \
            audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
 
 
-ADD package.json /baby-monitor
-WORKDIR /baby-monitor
+ADD package.json package-lock.json ${WORKDIR}/
+WORKDIR ${WORKDIR}
 RUN npm install
 
 
-ADD . /baby-monitor
+ADD . ${WORKDIR}
 
 RUN npm run build
 
