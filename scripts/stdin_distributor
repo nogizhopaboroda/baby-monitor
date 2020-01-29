@@ -1,11 +1,5 @@
 #!/usr/bin/env node
 
-
-/*
- *  Usage:
- *  stdin_distributor [duplicated_fifo_1 duplicated_fifo2 ...] < source_fifo
- * */
-
 const fs = require('fs');
 
 const argv = require('optimist')

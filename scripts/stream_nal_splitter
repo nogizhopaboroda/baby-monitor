@@ -1,12 +1,39 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const Splitter = require('stream-split');
+
+const argv = require('optimist')
+    .usage('Adds NAL units to the input stream, writes to output stream\nUsage: $0')
+    .options('i', {
+      alias : 'input',
+      describe: 'Input file',
+      demand: true,
+    })
+    .options('o', {
+      alias : 'output',
+      describe: 'Output file',
+      demand: true,
+    })
+    .argv;
+
 
 const NALseparator = new Buffer.from([0,0,0,1]);
 
-const liveStream = process.stdin.pipe(new Splitter(NALseparator));
+const source = argv.input;
+const target = argv.output;
 
-liveStream.on('data', data => {
-  process.stdout.write(Buffer.concat([NALseparator, data]));
+
+const readStream = fs.createReadStream(source);
+const processedStream = readStream.pipe(new Splitter(NALseparator));
+const writeStream = fs.createWriteStream(target);
+
+processedStream.on('data', data => {
+  writeStream.write(Buffer.concat([NALseparator, data]));
 });
 
+
+readStream.on('end', () => {
+  console.log('exiting');
+  process.kill( process.pid, 'SIGTERM' );
+});
