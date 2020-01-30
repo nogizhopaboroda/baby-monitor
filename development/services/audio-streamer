@@ -1,4 +1,4 @@
 #!/bin/sh
 
-ffmpeg -y -f lavfi -i "sine=frequency=1000" -ac 2 /streams/audio-stream-main.wav
+ffmpeg -y -re -f lavfi -i "sine=frequency=1000" -ac 2 /streams/audio-stream-main.wav
 
