@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
 const Splitter = require('stream-split');
+const createReadStreamHandler = require('../lib/read-stream-handler');
+const createWriteStreamHandler = require('../lib/write-stream-handler');
 
 const argv = require('optimist')
     .usage('Adds NAL units to the input stream, writes to output stream\nUsage: $0')
@@ -18,22 +19,37 @@ const argv = require('optimist')
     .argv;
 
 
-const NALseparator = new Buffer.from([0,0,0,1]);
-
 const source = argv.input;
 const target = argv.output;
 
+const NALseparator = new Buffer.from([0,0,0,1]);
 
-const readStream = fs.createReadStream(source);
-const processedStream = readStream.pipe(new Splitter(NALseparator));
-const writeStream = fs.createWriteStream(target);
+let writeStream;
+let processedStream;
 
-processedStream.on('data', data => {
-  writeStream.write(Buffer.concat([NALseparator, data]));
-});
+const onWriteOpen = (stream) => {
+  console.log(`writing output to ${target}`);
+  writeStream = stream;
+};
+const onWriteClose = (stream) => {
+  console.log(`consumer of "${target}" disconnected`);
+}
+createWriteStreamHandler({ target, onOpen: onWriteOpen, onClose: onWriteClose });
 
 
-readStream.on('end', () => {
-  console.log('exiting');
-  process.kill( process.pid, 'SIGTERM' );
-});
+const onReadOpen = (stream) => {
+  console.log(`initialising input stream from ${source}`);
+  processedStream = stream.pipe(new Splitter(NALseparator));
+
+  processedStream.on('data', (data) => {
+    writeStream.write(Buffer.concat([NALseparator, data]));
+  });
+};
+
+const onReadClose = () => {
+  console.log('input stream closed');
+  processedStream.destroy();
+};
+
+createReadStreamHandler({ source, onOpen: onReadOpen, onClose: onReadClose });
+

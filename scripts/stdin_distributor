@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const createReadableStreamHandler = require('../lib/read-stream-handler');
+const createReadStreamHandler = require('../lib/read-stream-handler');
+const createWriteStreamHandler = require('../lib/write-stream-handler');
 
 const argv = require('optimist')
     .usage('Distributes input stream to multiple output streams\nUsage: $0')
@@ -25,27 +25,27 @@ const targets = [].concat(argv.output);
 
 const writeStreams = {};
 
-const duplicateStream = (fileName) => {
-  console.log(`creating stream: ${source} -> ${fileName}`);
-  const writeStream = fs.createWriteStream(fileName);
-
-  writeStreams[fileName] = writeStream;
-
-  writeStream.on('error', (e) => {
-    console.log(`consumer of "${fileName}" disconnected`);
-    writeStream.destroy();
-    duplicateStream(fileName);
-  });
-}
-
-targets.forEach(duplicateStream);
+targets.forEach((target) => {
+  const onOpen = (stream) => {
+    console.log(`creating stream: ${source} -> ${target}`);
+    writeStreams[target] = stream;
+  };
+  const onClose = (stream) => {
+    console.log(`consumer of "${target}" disconnected`);
+  }
+  createWriteStreamHandler({ target, onOpen, onClose });
+});
 
 const onData = (data) => {
   Object.values(writeStreams).forEach((stream) => stream.write(data));
 };
 
-const onClose = () => {
-  console.log('reinitialising stream');
+const onOpen = () => {
+  console.log(`initialising input stream from ${source}`);
 };
 
-createReadableStreamHandler({ source, onData, onClose });
+const onClose = () => {
+  console.log('input stream closed');
+};
+
+createReadStreamHandler({ source, onOpen, onData, onClose });
