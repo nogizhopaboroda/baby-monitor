@@ -8,9 +8,12 @@ RUN apt-get update && \
     apt-get -qy install \
         curl git make build-essential \
         nodejs npm \
-        python python-pip \
+        python python-pip python-dev \
         alsa-utils ffmpeg \
-        tmux
+        tmux htop
+
+RUN sudo python -m pip install --upgrade pip setuptools wheel
+RUN sudo pip install Adafruit_DHT
 
 
 #install mon
