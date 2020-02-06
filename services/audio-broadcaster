@@ -1,3 +1,4 @@
 #!/bin/sh
 
-websocat --binary -s 0.0.0.0:8000 < /streams/audio-stream-web.wav
+# websocat --binary -s 0.0.0.0:8000 < /streams/audio-stream-web.wav
+cat < /streams/audio-stream-web.wav | ./scripts/ws-broadcaster -i - -p 8000
