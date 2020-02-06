@@ -7,4 +7,6 @@ parent_directory_path=$(dirname "$current_path")
 
 . $parent_directory_path/build.sh $BASE_IMAGE_TAG
 
-docker build --build-arg BASE_IMAGE=$BASE_IMAGE_TAG --tag baby-monitor-development:latest $current_path
+command="docker build $@ --build-arg BASE_IMAGE=$BASE_IMAGE_TAG --tag baby-monitor-development:latest $current_path"
+
+exec $command
