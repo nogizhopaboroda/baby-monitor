@@ -25,26 +25,28 @@ const port = argv.port;
 
 const wss = new WebSocket.Server({ port });
 
-wss.on('connection', function connection(ws) {
+const connections = new Set();
+
+wss.on('connection', (ws) => {
   console.log('client connected');
-  ws.on('close', () => console.log('client disconnected'));
+  connections.add(ws);
+  ws.on('close', () => {
+    connections.delete(ws);
+    console.log('client disconnected')
+  });
 });
 
 const onData = (data) => {
-  wss.clients.forEach((client) => {
-    if(client.readyState !== WebSocket.OPEN){
-      return;
-    }
-    client.send(data);
-  });
+  connections.forEach((ws) => ws.send(data));
 }
 
 const onOpen = () => {
   console.log(`initialising input stream from ${source}`);
 };
 
-const onClose = () => {
+const onClose = (stream) => {
   console.log('input stream closed');
+  process.exit(0);
 };
 
 createReadStreamHandler({ source, onOpen, onData, onClose });
