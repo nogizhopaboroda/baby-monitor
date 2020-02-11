@@ -2,6 +2,8 @@ FROM balenalib/raspberrypi3
 
 
 ENV WORKDIR /baby-monitor
+ENV STREAMS_DIR /streams
+ENV MAIN_VIDEO_STREAM video-stream-main.h264
 
 
 RUN apt-get update && \
@@ -35,8 +37,8 @@ RUN chmod +x /usr/local/bin/gotty
 
 
 #create named pipes for streams
-RUN mkdir /streams && cd /streams && \
-    mkfifo video-stream-main.h264 video-stream-web.h264 video-stream-1.h264 \
+RUN mkdir $STREAMS_DIR && cd $STREAMS_DIR && \
+    mkfifo $MAIN_VIDEO_STREAM video-stream-web.h264 video-stream-1.h264 \
            audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
 
 
