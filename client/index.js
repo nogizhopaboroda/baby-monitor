@@ -7,22 +7,40 @@ const PORT = process.env.PORT || window.location.port;
 
 const $appContainer = document.querySelector('#app-container');
 
-// Create h264 player
-var uri = `ws://192.168.1.202:8001`;
-var wsavc = new WSAvcPlayer();
-var ws1 = new WebSocket(uri);
-ws1.binaryType = 'arraybuffer';
-ws1.onopen = () => {
-    wsavc.framesList = []
-    console.log('Connected to ' + uri)
+class StreamClient {
+  constructor(options = {}){
+    this.options = options;
+    this.createSocket();
+  }
+  createSocket(){
+    const { url } = this.options;
+    const ws = this.ws = new WebSocket(url);
+    ws.binaryType = 'arraybuffer';
+
+    ws.onopen = this.onOpen.bind(this);
+    ws.onmessage = this.onMessage.bind(this);
+  }
+  onOpen(){
+    this.options.onOpen && this.options.onOpen();
+  }
+  onMessage(event){
+    const data = new Uint8Array(event.data);
+    this.options.onMessage && this.options.onMessage(data);
+  }
 }
-ws1.addEventListener('message',function(event) {
-  const data = new Uint8Array(event.data);
-  wsavc.feed(data);
+
+const wsavc = new WSAvcPlayer();
+
+const videoStream = new StreamClient({
+  url: `ws://127.0.0.1:8001`,
+  onOpen(){
+    wsavc.framesList = []
+    console.log('Connected to video stream');
+  },
+  onMessage(data){
+    wsavc.feed(data);
+  }
 });
-// wsavc.connect(uri);
-//expose instance for debugging
-// window.wsavc = wsavc;
 
 const canvas = wsavc.AvcPlayer.canvas;
 $appContainer.appendChild(canvas);
@@ -35,8 +53,17 @@ const player = new PCMPlayer({
   sampleRate: 44100,
   flushingTime: 0
 });
-window.player = player;
-//expose instance for debugging
+
+const audioStream = new StreamClient({
+  url: `ws://127.0.0.1:8000`,
+  onOpen(){
+    console.log('Connected to audio stream');
+  },
+  onMessage(data){
+    player.feed(data);
+  }
+});
+
 
 const $audioLevel = document.querySelector('#audio-level');
 const $visualisationCanvas = createVisualiser({
@@ -44,18 +71,4 @@ const $visualisationCanvas = createVisualiser({
   audioContext: player.audioCtx,
   canvas: $audioLevel,
 });
-
-// $appContainer.appendChild($visualisationCanvas);
-
-
-const audioStreamUrl = `ws://192.168.1.202:8000`;
-
-var ws = new WebSocket(audioStreamUrl);
-ws.binaryType = 'arraybuffer';
-ws.addEventListener('message',function(event) {
-  const data = new Uint8Array(event.data);
-  player.feed(data);
-});
-
-
 
