@@ -1,4 +1,4 @@
-import WSAvcPlayer from 'ws-avc-player';
+import WSAvcPlayer from './ws-avc-player';
 import PCMPlayer from './pcm-player';
 import createVisualiser from './visualiser';
 
@@ -8,11 +8,21 @@ const PORT = process.env.PORT || window.location.port;
 const $appContainer = document.querySelector('#app-container');
 
 // Create h264 player
-var uri = `ws://127.0.0.1:8001`;
+var uri = `ws://192.168.1.202:8001`;
 var wsavc = new WSAvcPlayer();
-wsavc.connect(uri);
+var ws1 = new WebSocket(uri);
+ws1.binaryType = 'arraybuffer';
+ws1.onopen = () => {
+    wsavc.framesList = []
+    console.log('Connected to ' + uri)
+}
+ws1.addEventListener('message',function(event) {
+  const data = new Uint8Array(event.data);
+  wsavc.feed(data);
+});
+// wsavc.connect(uri);
 //expose instance for debugging
-window.wsavc = wsavc;
+// window.wsavc = wsavc;
 
 const canvas = wsavc.AvcPlayer.canvas;
 $appContainer.appendChild(canvas);
@@ -38,7 +48,7 @@ const $visualisationCanvas = createVisualiser({
 // $appContainer.appendChild($visualisationCanvas);
 
 
-const audioStreamUrl = `ws://127.0.0.1:8000`;
+const audioStreamUrl = `ws://192.168.1.202:8000`;
 
 var ws = new WebSocket(audioStreamUrl);
 ws.binaryType = 'arraybuffer';
