@@ -1,4 +1,4 @@
 #!/bin/sh
 
-arecord -c 1 -r 44100 -f S16_LE -D plughw:1,0 /streams/audio-stream-main.wav
+arecord -c 1 -r 44100 -f --fatal-errors S16_LE -D plughw:1,0 /streams/audio-stream-main.wav
 
