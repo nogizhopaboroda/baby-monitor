@@ -46,7 +46,7 @@ const onOpen = () => {
 
 const onClose = (stream) => {
   console.log('input stream closed');
-  process.exit(0);
+  source === '-' && process.exit(0);
 };
 
 createReadStreamHandler({ source, onOpen, onData, onClose });
