@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+const WebSocket = require('ws');
+const Splitter = require('stream-split');
+
+const argv = require('optimist')
+    .usage('Adds NAL units to the input stream, serves over websockets\nUsage: $0')
+    .options('i', {
+      alias : 'input',
+      describe: 'Input stream',
+      demand: true,
+    })
+    .options('p', {
+      alias : 'port',
+      describe: 'server port',
+      default: 8080,
+    })
+    .argv;
+
+
+const NALseparator = new Buffer.from([0,0,0,1]);
+
+
+const source = argv.input;
+const port = argv.port;
+
+const wss = new WebSocket.Server({ port });
+
+wss.on('connection', (ws) => {
+  console.log('client connected');
+
+  const processedStream = new Splitter(NALseparator);
+  const client = new WebSocket(source);
+
+  client.on('open', () => console.log(`connected to ${source}`));
+
+  client.on('message', (data) => {
+    processedStream.write(data);
+  });
+
+  processedStream.on('data', (data) => {
+    ws.send(Buffer.concat([NALseparator, data]));
+  });
+
+  ws.on('close', () => {
+    processedStream.destroy();
+    client.close();
+    console.log('client disconnected')
+  });
+});
+
