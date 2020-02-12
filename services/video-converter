@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./scripts/stream-nal-splitter -i /streams/video-stream-1.h264 -o /streams/video-stream-web.h264
+websocat --binary ws://0.0.0.0:8002 | ./scripts/stream-nal-splitter -i - -o - | ./scripts/ws-broadcaster -i - -p 8001
