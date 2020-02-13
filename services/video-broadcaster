@@ -2,4 +2,5 @@
 
 # websocat --binary -s 0.0.0.0:8001 < /streams/video-stream-web.h264
 # cat < /streams/video-stream-web.h264 | ./scripts/ws-broadcaster -i - -p 8001
-./scripts/ws-broadcaster -i /streams/video-stream-web.h264 -p 8003
+# ./scripts/ws-broadcaster -i /streams/video-stream-web.h264 -p 8003
+./bin/ws-broadcaster -i /streams/video-stream-web.h264 -p 8003
