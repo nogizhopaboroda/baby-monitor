@@ -4,6 +4,7 @@ FROM balenalib/raspberrypi3
 ENV WORKDIR /baby-monitor
 ENV STREAMS_DIR /streams
 ENV MAIN_VIDEO_STREAM video-stream-main.h264
+ENV MAIN_AUDIO_STREAM audio-stream-main.raw
 
 
 RUN apt-get update && \
@@ -24,6 +25,9 @@ RUN mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/tj/mon/archive/
 #install mongroup
 RUN mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mongroup
 
+#install fifo_broadcaster
+RUN mkdir /tmp/fifo_broadcaster && cd /tmp/fifo_broadcaster && curl -L# https://github.com/nogizhopaboroda/fifo_broadcaster/releases/download/0.2/fifo_broadcaster-arm.tar.gz -o fifo_broadcaster.tar.gz && tar -xvf fifo_broadcaster.tar.gz && mv broadcaster /usr/local/bin/ws-broadcaster && rm -rf /tmp/fifo_broadcaster
+
 # install websocat
 RUN sudo curl -L https://github.com/vi/websocat/releases/download/v2.0.0-alpha0/websocat_arm-linux-static -o /usr/local/bin/websocat
 RUN chmod +x /usr/local/bin/websocat
@@ -39,7 +43,7 @@ RUN chmod +x /usr/local/bin/gotty
 #create named pipes for streams
 RUN mkdir $STREAMS_DIR && cd $STREAMS_DIR && \
     mkfifo $MAIN_VIDEO_STREAM video-stream-web.h264 video-stream-1.h264 \
-           audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav
+           audio-stream-main.wav  audio-stream-web.wav  audio-stream-1.wav $MAIN_AUDIO_STREAM
 
 
 ADD package.json package-lock.json ${WORKDIR}/

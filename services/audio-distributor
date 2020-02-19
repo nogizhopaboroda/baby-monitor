@@ -1,3 +1,4 @@
 #!/bin/sh
 
-./bin/ws-broadcaster -i /streams/audio-stream-main.wav -p 8000
+# ./bin/ws-broadcaster -i /streams/audio-stream-main.wav -p 8000
+ws-broadcaster -i /streams/audio-stream-main.raw -wp 8000 -tp 2000 -b 16000
