@@ -7,7 +7,7 @@ ENV MAIN_VIDEO_STREAM video-stream-main.h264
 ENV MAIN_AUDIO_STREAM audio-stream-main.raw
 
 
-RUN apt-get update && apt-get upgrade &&
+RUN apt-get update && apt-get upgrade && \
     apt-get -qy install \
         curl git make build-essential \
         nodejs npm \
