@@ -32,7 +32,7 @@ class StreamClient {
 const wsavc = new WSAvcPlayer();
 
 const videoStream = new StreamClient({
-  url: `ws://127.0.0.1:8001`,
+  url: `ws://${HOST}:8001`,
   onOpen(){
     wsavc.framesList = []
     console.log('Connected to video stream');
@@ -50,12 +50,12 @@ $appContainer.appendChild(canvas);
 const player = new PCMPlayer({
   encoding: '16bitInt',
   channels: 1,
-  sampleRate: 44100,
+  sampleRate: 16000,
   flushingTime: 0
 });
 
 const audioStream = new StreamClient({
-  url: `ws://127.0.0.1:8000`,
+  url: `ws://${HOST}:8000`,
   onOpen(){
     console.log('Connected to audio stream');
   },
