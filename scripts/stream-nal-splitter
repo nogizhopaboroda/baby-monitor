@@ -1,55 +1,57 @@
 #!/usr/bin/env node
 
 const Splitter = require('stream-split');
+const stream = require('stream');
+const net = require('net');
 const createReadStreamHandler = require('../lib/read-stream-handler');
 const createWriteStreamHandler = require('../lib/write-stream-handler');
 
 const argv = require('optimist')
-    .usage('Adds NAL units to the input stream, writes to output stream\nUsage: $0')
-    .options('i', {
-      alias : 'input',
-      describe: 'Input file',
-      demand: true,
-    })
-    .options('o', {
-      alias : 'output',
-      describe: 'Output file',
-      demand: true,
-    })
-    .argv;
+  .usage(
+    'Adds NAL units to the input stream, writes to output stream\nUsage: $0',
+  )
+  .options('i', {
+    alias: 'input',
+    describe: 'Input host:port',
+    demand: true,
+  })
+  .options('o', {
+    alias: 'output',
+    describe: 'Output file',
+    demand: true,
+  }).argv;
 
-
-const source = argv.input;
+const [host, port] = argv.input.split(':');
 const target = argv.output;
 
-const NALseparator = new Buffer.from([0,0,0,1]);
+const NALseparator = new Buffer.from([0, 0, 0, 1]);
 
-let writeStream;
-let processedStream;
+var client = new net.Socket();
 
-const onWriteOpen = (stream) => {
+client.connect(port, host, () => console.log('Connected'));
+
+
+const processedStream = client.pipe(new Splitter(NALseparator)).pipe(
+  new stream.Transform({
+    transform: function(chunk, encoding, callback) {
+      const chunkWithSeparator = Buffer.concat([NALseparator, chunk]);
+      this.push(chunkWithSeparator);
+      callback();
+    },
+  }),
+);
+
+// processedStream.pipe(process.stdout);
+
+
+const onWriteOpen = stream => {
   console.log(`writing output to ${target}`);
-  writeStream = stream;
+  // writeStream = stream;
+  processedStream.pipe(stream);
 };
-const onWriteClose = (stream) => {
+const onWriteClose = stream => {
   console.log(`consumer of "${target}" disconnected`);
-}
-createWriteStreamHandler({ target, onOpen: onWriteOpen, onClose: onWriteClose });
-
-
-const onReadOpen = (stream) => {
-  console.log(`initialising input stream from ${source}`);
-  processedStream = stream.pipe(new Splitter(NALseparator));
-
-  processedStream.on('data', (data) => {
-    writeStream.write(Buffer.concat([NALseparator, data]));
-  });
+  processedStream.unpipe(stream);
 };
 
-const onReadClose = () => {
-  console.log('input stream closed');
-  processedStream.destroy();
-};
-
-createReadStreamHandler({ source, onOpen: onReadOpen, onClose: onReadClose });
-
+createWriteStreamHandler({target, onOpen: onWriteOpen, onClose: onWriteClose});
