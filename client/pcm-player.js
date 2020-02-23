@@ -1,4 +1,7 @@
 // taken from https://github.com/samirkumardas/pcm-player
+
+import NoiseGateNode from 'noise-gate';
+
 export default function PCMPlayer(option) {
   this.init(option);
 }
@@ -8,12 +11,13 @@ PCMPlayer.prototype.init = function(option) {
     encoding: '16bitInt',
     channels: 1,
     sampleRate: 8000,
-    flushingTime: 1000,
+    // flushingTime: 1000,
   };
   this.option = Object.assign({}, defaults, option);
-  this.samples = new Float32Array();
-  this.flush = this.flush.bind(this);
-  this.interval = setInterval(this.flush, this.option.flushingTime);
+  // this.samples = new Float32Array();
+  // this.flush = this.flush.bind(this);
+  // this.interval = setInterval(this.flush, this.option.flushingTime);
+  // this.playBuffer();
   this.maxValue = this.getMaxValue();
   this.typedArray = this.getTypedArray();
   this.createContext();
@@ -49,7 +53,12 @@ PCMPlayer.prototype.createContext = function() {
   this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   this.gainNode = this.audioCtx.createGain();
   this.gainNode.gain.value = 1;
-  this.gainNode.connect(this.audioCtx.destination);
+
+  this.noiseGate = new NoiseGateNode(this.audioCtx);
+  this.gainNode.connect(this.noiseGate);
+  this.noiseGate.connect(this.audioCtx.destination);
+
+  // this.gainNode.connect(this.audioCtx.destination);
 };
 
 PCMPlayer.prototype.isTypedArray = function(data) {
@@ -61,10 +70,12 @@ PCMPlayer.prototype.isTypedArray = function(data) {
 PCMPlayer.prototype.feed = function(data) {
   if (!this.isTypedArray(data)) return;
   data = this.getFormatedValue(data);
-  var tmp = new Float32Array(this.samples.length + data.length);
-  tmp.set(this.samples, 0);
-  tmp.set(data, this.samples.length);
-  this.samples = tmp;
+  // var tmp = new Float32Array(this.samples.length + data.length);
+  // tmp.set(this.samples, 0);
+  // tmp.set(data, this.samples.length);
+  // this.samples = tmp;
+
+  this.flush(data);
 };
 
 PCMPlayer.prototype.getFormatedValue = function(data) {
@@ -83,18 +94,18 @@ PCMPlayer.prototype.volume = function(volume) {
 };
 
 PCMPlayer.prototype.destroy = function() {
-  if (this.interval) {
-    clearInterval(this.interval);
-  }
-  this.samples = null;
+  // if (this.interval) {
+    // clearInterval(this.interval);
+  // }
+  // this.samples = null;
   this.audioCtx.close();
   this.audioCtx = null;
 };
 
-PCMPlayer.prototype.flush = function() {
-  if (!this.samples.length) return;
+PCMPlayer.prototype.flush = function(sample) {
+  if (!sample.length) return;
   var bufferSource = this.audioCtx.createBufferSource(),
-    length = this.samples.length / this.option.channels,
+    length = sample.length / this.option.channels,
     audioBuffer = this.audioCtx.createBuffer(
       this.option.channels,
       length,
@@ -111,7 +122,7 @@ PCMPlayer.prototype.flush = function() {
     offset = channel;
     decrement = 50;
     for (i = 0; i < length; i++) {
-      audioData[i] = this.samples[offset];
+      audioData[i] = sample[offset];
       /* fadein */
       if (i < 50) {
         audioData[i] = (audioData[i] * i) / 50;
@@ -127,5 +138,8 @@ PCMPlayer.prototype.flush = function() {
   bufferSource.buffer = audioBuffer;
   bufferSource.connect(this.gainNode);
   bufferSource.start(this.audioCtx.currentTime);
-  this.samples = new Float32Array();
+  // debugger;
+  // debugger;
+  // console.log(this.audioCtx.currentTime, audioBuffer.duration);
+  // this.samples = new Float32Array();
 };
