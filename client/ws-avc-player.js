@@ -1,5 +1,8 @@
 'use strict';
 
+
+
+
 const {Player} = require('broadway-player');
 
 const log = console.log;
@@ -7,6 +10,9 @@ class WSAvcPlayer {
   constructor({useWorker, workerFile} = {}) {
     // this.canvas = canvas
     // this.canvastype = canvastype
+    this.worker = new Worker('./worker.js');
+
+    this.worker.onmessage = (event) => this.feed(event.data);
 
     this.AvcPlayer = new Player({
       useWorker,
@@ -56,6 +62,10 @@ class WSAvcPlayer {
       requestAnimationFrame(this.shiftFrame);
       // this.shiftFrameTimeout = setTimeout(this.shiftFrame, 1)
     };
+  }
+
+  feedRaw(chunk) {
+    this.worker.postMessage(chunk);
   }
 
   feed(frame) {

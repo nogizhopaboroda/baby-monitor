@@ -54,7 +54,6 @@ class StreamClient {
 
 const wsavc = new WSAvcPlayer();
 
-let i = 0;
 const videoStream = new StreamClient({
   url: `ws://${HOST}:8002`,
   onOpen(){
@@ -62,17 +61,9 @@ const videoStream = new StreamClient({
     console.log('Connected to video stream');
   },
   onMessage(data){
-    //TODO: this can be optimised
-    tmpA = Int8Array.from([...tmpA, ...data])
-    const index = tmpA.findIndex(function (element, index, array) {
-      return element === 0 && array[index + 1] === 0 && array[index + 2] === 0  && array[index + 3] === 1;
-    })
-    if(~index){
-      const chunk = tmpA.slice(0, index);
-      tmpA = tmpA.slice(index + 4);
-      console.log('got chunk');
-      wsavc.feed(chunk);
-    }
+    // TODO: extract to worker
+    // wsavc.feed(data);
+    wsavc.feedRaw(data);
   }
 });
 
