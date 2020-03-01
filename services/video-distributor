@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# ./scripts/stdin_distributor -i /streams/video-stream-main.h264 -o /streams/video-stream-1.h264
-ws-broadcaster -i /streams/video-stream-main.h264 -wp 8002 -tp 2002
+# ws-broadcaster -i /streams/video-stream-main.h264 -wp 8002 -tp 2002
+ws-broadcaster -i /streams/video-stream-main.h264 -wp 8002 -tp 2002 -s 00000001
