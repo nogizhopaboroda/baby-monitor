@@ -8,9 +8,6 @@ const PORT = process.env.PORT || window.location.port;
 const $appContainer = document.querySelector('#app-container');
 
 
-let tmpA = new Uint8Array();
-let arrs = [];
-
 class StreamClient {
   constructor(options = {}){
     this.options = options;
