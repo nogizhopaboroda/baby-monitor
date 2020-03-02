@@ -45,6 +45,7 @@ const videoStream = new StreamClient({
 });
 
 const canvas = wsavc.AvcPlayer.canvas;
+canvas.id = 'video-canvas';
 $appContainer.appendChild(canvas);
 
 
