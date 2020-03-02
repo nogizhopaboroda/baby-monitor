@@ -2,25 +2,6 @@ import WSAvcPlayer from './ws-avc-player';
 import PCMPlayer from './pcm-player';
 import createVisualiser from './visualiser';
 
-import muxjs from 'mux.js';
-// const muxjs = require("mux.js");
-let transmuxer = new muxjs.mp4.Transmuxer({ 'remux': false });
-var aa = new muxjs.codecs.h264.H264Stream();
-// debugger;
-// console.log(muxjs);
-window.muxjs = muxjs
-// debugger;
-
-transmuxer.on("data", function(segment) {
-console.log(456);
-debugger;
-});
-
-aa.on("data", function(segment) {
-console.log(8989);
-debugger;
-});
-
 const HOST = process.env.HOST || window.location.hostname;
 const PORT = process.env.PORT || window.location.port;
 
@@ -61,9 +42,8 @@ const videoStream = new StreamClient({
     console.log('Connected to video stream');
   },
   onMessage(data){
-    // TODO: extract to worker
-    // wsavc.feed(data);
-    wsavc.feedRaw(data);
+    wsavc.feed(data);
+    // wsavc.feedRaw(data);
   }
 });
 
