@@ -24,7 +24,7 @@ ENV MAIN_VIDEO_STREAM video-stream-main.h264
 ENV MAIN_AUDIO_STREAM audio-stream-main.raw
 
 RUN apk update && apk add \
-    git g++ gcc libgcc libstdc++ linux-headers make \
+    git g++ gcc libgcc libstdc++ linux-headers make git \
     python py-pip python-dev \
     raspberrypi \
     alsa-utils ffmpeg \
@@ -34,9 +34,8 @@ RUN apk update && apk add \
 COPY --from=builder /${WORKDIR}/dist /${WORKDIR}/dist
 
 
-RUN python -m pip install --upgrade pip setuptools wheel
-RUN pip install Adafruit_DHT --install-option="--force-pi"
-
+# install AdafruitDHT
+RUN mkdir /tmp/dht && cd /tmp/dht && git clone https://github.com/adafruit/Adafruit_Python_DHT.git && cd Adafruit_Python_DHT && python setup.py install && cd ../ && rm -rf Adafruit_Python_DHT
 
 #install mon
 RUN mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/tj/mon/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mon
