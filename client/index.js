@@ -1,5 +1,5 @@
 import WSAvcPlayer from './ws-avc-player';
-import PCMPlayer from './pcm-player';
+import AudioPlayer from './audio-player';
 import createVisualiser from './visualiser';
 
 const HOST = process.env.HOST || window.location.hostname;
@@ -52,7 +52,7 @@ $appContainer.appendChild(canvas);
 
 
 
-const player = new PCMPlayer({
+const player = new AudioPlayer({
   encoding: '16bitInt',
   channels: 1,
   sampleRate: 16000,
