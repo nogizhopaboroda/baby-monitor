@@ -7,7 +7,7 @@ RUN apk --no-cache add --virtual native-deps \
 
 COPY package.json yarn.lock ${WORKDIR}/
 WORKDIR ${WORKDIR}
-RUN yarn install
+RUN yarn install --network-timeout 1000000
 
 ADD . ${WORKDIR}
 
