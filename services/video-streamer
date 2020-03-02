@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # raspivid --nopreview --width 960 --height 540 --framerate 20 --profile baseline --timeout 0 --inline -ih -o /streams/video-stream-main.h264
-raspivid --nopreview --width 960 --height 540 --framerate 20 --profile baseline --timeout 0 --inline -ih -rot 90 -br 60 -v -o /streams/video-stream-main.h264
+/opt/vc/bin/raspivid --nopreview --width 960 --height 540 --framerate 20 --profile baseline --timeout 0 --inline -ih -rot 90 -br 60 -v -o /streams/video-stream-main.h264
