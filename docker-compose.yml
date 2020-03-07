@@ -27,6 +27,8 @@ services:
     build:
       context: app-development
       dockerfile: development.Dockerfile
+      args:
+        BASE_IMAGE: baby-monitor:latest
     ports:
       - 5000:5000
       - 8000:8000
