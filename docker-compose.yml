@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     privileged: true
+    network_mode: "none"
     devices:
       - "/dev/vchiq:/dev/vchiq"
     volumes:
@@ -24,8 +25,8 @@ services:
       - baby-monitor
     image: baby-monitor-dev:latest
     build:
-      context: .
-      dockerfile: mock.Dockerfile
+      context: app-development
+      dockerfile: development.Dockerfile
     ports:
       - 5000:5000
       - 8000:8000
