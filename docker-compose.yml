@@ -1,18 +1,36 @@
-version: '3'
+version: '3.7'
 services:
   baby-monitor:
-    build: .
+    image: baby-monitor:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     privileged: true
-    network_mode: "host"
     devices:
       - "/dev/vchiq:/dev/vchiq"
     volumes:
-      - /dev/snd/pcmC0D0p:/dev/snd/pcmC0D0p
-      - /dev/snd/pcmC1D0c:/dev/snd/pcmC1D0c
-      - /dev/snd/controlC0:/dev/snd/controlC0
-      - /dev/snd/controlC1:/dev/snd/controlC1
+      - /dev/snd/:/dev/snd/
       - /opt/vc/lib:/opt/vc/lib
     ports:
-      - 8888:8888
-      - 8081:8081
-    command: "/bin/sh"
+      - 5000:5000
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+      - 2000:2000
+      - 2001:2001
+      - 2002:2002
+  baby-monitor-dev:
+    depends_on:
+      - baby-monitor
+    image: baby-monitor-dev:latest
+    build:
+      context: .
+      dockerfile: mock.Dockerfile
+    ports:
+      - 5000:5000
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+      - 2000:2000
+      - 2001:2001
+      - 2002:2002

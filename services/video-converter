@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# websocat --binary ws://0.0.0.0:8002 | ./scripts/stream-nal-splitter -i - -o - | ./scripts/ws-broadcaster -i - -p 8001
-./scripts/converter-broadcaster -i ws://0.0.0.0:8002 -p 8001

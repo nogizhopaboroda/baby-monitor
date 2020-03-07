@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "parcel client/index.html",
-    "build": "parcel build client/index.html",
-    "server": "node server/index.js"
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "author": "",
   "license": "ISC",
@@ -15,10 +14,6 @@
   },
   "dependencies": {
     "broadway-player": "^0.1.1",
-    "noise-gate": "0.0.3",
-    "optimist": "^0.6.1",
-    "stream-split": "^1.1.0",
-    "ws": "^7.2.1",
-    "ws-avc-player": "^2.0.2"
+    "noise-gate": "0.0.3"
   }
 }

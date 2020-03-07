@@ -1,3 +1,0 @@
-#!/bin/sh
-
-ffmpeg -f s16le -i tcp://0.0.0.0:2000 -f h264 -i tcp://0.0.0.0:2002 -c copy /streams/av-stream.mkv
