@@ -6,7 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     privileged: true
-    network_mode: "none"
     devices:
       - "/dev/vchiq:/dev/vchiq"
     volumes:
@@ -21,8 +20,8 @@ services:
       - 2001:2001
       - 2002:2002
   baby-monitor-dev:
-    depends_on:
-      - baby-monitor
+    # depends_on:
+      # - baby-monitor
     image: baby-monitor-dev:latest
     build:
       context: app-development
