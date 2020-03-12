@@ -1,4 +1,3 @@
 #!/bin/sh
 
-# ./bin/ws-broadcaster -i /streams/audio-stream-main.wav -p 8000
-ws-broadcaster -i /streams/audio-stream-main.raw -wp 8000 -tp 2000 -b 16000
+ws-broadcaster -i $PIPES_DIR/$AUDIO_RECORDING_PIPE -wp $AUDIO_STREAMER_WS_PORT -tp $AUDIO_STREAMER_TCP_PORT -b $(expr $AUDIO_BUFFER_SIZE \* 2)

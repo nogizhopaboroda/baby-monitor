@@ -17,12 +17,34 @@ RUN yarn build
 
 FROM balenalib/raspberrypi3-alpine
 
+# Set env variables
 
 ENV WORKDIR /app
 
-ENV STREAMS_DIR /streams
-ENV MAIN_VIDEO_STREAM video-stream-main.h264
-ENV MAIN_AUDIO_STREAM audio-stream-main.raw
+ENV PIPES_DIR /streams_test
+ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
+ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
+
+## General
+ENV HTTP_PORT=8080
+
+## Audio
+ENV AUDIO_SAMPLE_RATE=16000
+ENV AUDIO_FORMAT=S16_LE
+ENV AUDIO_BUFFER_SIZE=8000
+ENV AUDIO_CHANNELS=1
+ENV AUDIO_FILE_TYPE=raw
+ENV AUDIO_STREAMER_WS_PORT=8000
+ENV AUDIO_STREAMER_TCP_PORT=2000
+
+##Video
+ENV VIDEO_HEIGHT=549
+ENV VIDEO_WIDTH=960
+ENV VIDEO_FRAMERATE=20
+ENV VIDEO_BRIGHTNESS=60
+ENV VIDEO_ROTATION=90
+ENV VIDEO_STREAMER_WS_PORT=8001
+ENV VIDEO_STREAMER_TCP_PORT=2001
 
 RUN apk update && apk add \
     git g++ gcc libgcc libstdc++ linux-headers make git \
@@ -61,8 +83,8 @@ RUN chmod +x /usr/local/bin/gotty
 
 
 #create named pipes for streams
-RUN mkdir $STREAMS_DIR && cd $STREAMS_DIR && \
-    mkfifo $MAIN_VIDEO_STREAM $MAIN_AUDIO_STREAM
+RUN mkdir $PIPES_DIR && cd $PIPES_DIR && \
+    mkfifo $VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE
 
 
 WORKDIR ${WORKDIR}

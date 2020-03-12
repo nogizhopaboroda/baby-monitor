@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# ws-broadcaster -i /streams/video-stream-main.h264 -wp 8002 -tp 2002
-ws-broadcaster -i /streams/video-stream-main.h264 -wp 8002 -tp 2002 -s 00000001
+NAL_SEPARATOR=00000001
+ws-broadcaster -i $PIPES_DIR/$VIDEO_RECORDING_PIPE -wp $VIDEO_STREAMER_WS_PORT -tp $VIDEO_STREAMER_TCP_PORT -s $NAL_SEPARATOR
