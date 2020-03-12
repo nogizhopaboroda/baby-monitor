@@ -13,12 +13,11 @@ services:
       - /opt/vc/lib:/opt/vc/lib
     ports:
       - 5000:5000
-      - 8000:8000
-      - 8001:8001
-      - 8002:8002
-      - 2000:2000
-      - 2001:2001
-      - 2002:2002
+      - ${HTTP_PORT}:${HTTP_PORT}
+      - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}
+      - ${AUDIO_STREAMER_TCP_PORT}:${AUDIO_STREAMER_TCP_PORT}
+      - ${VIDEO_STREAMER_WS_PORT}:${VIDEO_STREAMER_WS_PORT}
+      - ${VIDEO_STREAMER_TCP_PORT}:${VIDEO_STREAMER_TCP_PORT}
   baby-monitor-dev:
     # depends_on:
       # - baby-monitor
@@ -30,9 +29,8 @@ services:
         BASE_IMAGE: baby-monitor:latest
     ports:
       - 5000:5000
-      - 8000:8000
-      - 8001:8001
-      - 8002:8002
-      - 2000:2000
-      - 2001:2001
-      - 2002:2002
+      - ${HTTP_PORT}:${HTTP_PORT}
+      - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}
+      - ${AUDIO_STREAMER_TCP_PORT}:${AUDIO_STREAMER_TCP_PORT}
+      - ${VIDEO_STREAMER_WS_PORT}:${VIDEO_STREAMER_WS_PORT}
+      - ${VIDEO_STREAMER_TCP_PORT}:${VIDEO_STREAMER_TCP_PORT}

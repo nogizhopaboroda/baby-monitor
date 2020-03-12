@@ -1,11 +1,11 @@
 0.0.0.0 {
-  root {%SITE_ROOT%}
+  root {$SITE_ROOT}
 
-  proxy /audio-stream 0.0.0.0:8000 {
+  proxy /audio-stream 0.0.0.0:{$AUDIO_STREAMER_WS_PORT} {
     websocket
   }
 
-  proxy /video-stream 0.0.0.0:8002 {
+  proxy /video-stream 0.0.0.0:{$VIDEO_STREAMER_WS_PORT} {
     websocket
   }
 }

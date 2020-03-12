@@ -1,3 +1,3 @@
 #!/bin/sh
 
-arecord -c 1 -r 16000 --fatal-errors -f S16_LE -D plughw:1,0 -t raw --buffer-size=8000 $PIPES_DIR/$AUDIO_RECORDING_PIPE
+arecord -c $AUDIO_CHANNELS -r $AUDIO_SAMPLE_RATE --fatal-errors -f $AUDIO_FORMAT -D plughw:1,0 -t $AUDIO_FILE_TYPE --buffer-size=$AUDIO_BUFFER_SIZE $PIPES_DIR/$AUDIO_RECORDING_PIPE

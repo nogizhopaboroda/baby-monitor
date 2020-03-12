@@ -21,12 +21,13 @@ FROM balenalib/raspberrypi3-alpine
 
 ENV WORKDIR /app
 
-ENV PIPES_DIR /streams_test
+ENV PIPES_DIR /streams
 ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
 ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
 
 ## General
 ENV HTTP_PORT=8080
+ENV WEBSHELL_PORT=5000
 
 ## Audio
 ENV AUDIO_SAMPLE_RATE=16000
@@ -55,7 +56,8 @@ RUN apk update && apk add \
 
 
 # TODO: change to /assets
-COPY --from=builder /${WORKDIR}/dist /${WORKDIR}/dist
+ENV SITE_ROOT=/www
+COPY --from=builder /${WORKDIR}/dist ${SITE_ROOT}
 
 
 # install AdafruitDHT
