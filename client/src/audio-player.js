@@ -2,6 +2,8 @@
 
 import NoiseGateNode from 'noise-gate';
 
+const dBFSToGain = (dbfs) => Math.pow(10, dbfs / 20);
+
 export default class PCMPlayer {
   constructor(options) {
     this.init(options);
@@ -48,7 +50,8 @@ export default class PCMPlayer {
   createContext() {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.gainNode = this.audioCtx.createGain();
-    this.gainNode.gain.value = 1;
+
+    this.gainNode.gain.value = dBFSToGain(35); //30db
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
     this.gainNode.connect(this.noiseGate);
