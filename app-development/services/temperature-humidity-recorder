@@ -1,0 +1,6 @@
+#!/bin/bash
+while :
+do
+	echo "${RANDOM:0:2}.${RANDOM:0:1} ${RANDOM:0:2}.${RANDOM:0:1}"
+	sleep 1
+done
