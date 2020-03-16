@@ -30,21 +30,34 @@ class StreamClient {
   }
 }
 
-const wsavc = new WSAvcPlayer();
+const videoPlayer = new WSAvcPlayer();
+window.videoPlayer = videoPlayer;
+
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    console.log('lost focus. stopping player');
+    videoPlayer.pause();
+  } else {
+    console.log('got focus. starting player');
+    videoPlayer.play();
+  }
+}
+
+document.addEventListener('visibilitychange', handleVisibilityChange, false);
 
 const videoStream = new StreamClient({
   url: `ws://${HOST}:8002`,
   onOpen(){
-    wsavc.framesList = []
+    videoPlayer.framesList = []
     console.log('Connected to video stream');
   },
   onMessage(data){
-    wsavc.feed(data);
+    videoPlayer.feed(data);
     // wsavc.feedRaw(data);
   }
 });
 
-const canvas = wsavc.AvcPlayer.canvas;
+const canvas = videoPlayer.AvcPlayer.canvas;
 canvas.id = 'video-canvas';
 $appContainer.appendChild(canvas);
 

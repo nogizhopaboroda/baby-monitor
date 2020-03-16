@@ -32,9 +32,8 @@ class WSAvcPlayer {
       }
     };
 
-    this.pktnum = 0;
     this.framesList = [];
-    this.running = false;
+    this.running = true;
     this.shiftFrameTimeout = null;
   }
 
@@ -69,17 +68,24 @@ class WSAvcPlayer {
   }
 
   feed(frame) {
-    this.pktnum++;
     // const frame = new Uint8Array(evt.data)
     // console.log("[Pkt " + this.pktnum + " (" + evt.data.byteLength + " bytes)]");
     // this.decode(frame);
-    this.framesList.push(frame);
-    if (!this.running) {
-      this.running = true;
+    if (this.running) {
+      this.framesList.push(frame);
+      // this.running = true;
       clearTimeout(this.shiftFrameTimeout);
       this.shiftFrameTimeout = null;
       this.shiftFrameTimeout = setTimeout(this.shiftFrame, 1);
     }
+  }
+
+  pause(){
+    this.running = false;
+  }
+
+  play(){
+    this.running = true;
   }
 }
 export default WSAvcPlayer;
