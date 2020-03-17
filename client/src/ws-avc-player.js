@@ -10,9 +10,9 @@ class WSAvcPlayer {
   constructor({useWorker, workerFile} = {}) {
     // this.canvas = canvas
     // this.canvastype = canvastype
-    this.worker = new Worker('./worker.js');
+    // this.worker = new Worker('./worker.js');
 
-    this.worker.onmessage = (event) => this.feed(event.data);
+    // this.worker.onmessage = (event) => this.feed(event.data);
 
     this.AvcPlayer = new Player({
       useWorker,
@@ -64,7 +64,7 @@ class WSAvcPlayer {
   }
 
   feedRaw(chunk) {
-    this.worker.postMessage(chunk);
+    // this.worker.postMessage(chunk);
   }
 
   feed(frame) {

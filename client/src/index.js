@@ -30,7 +30,11 @@ class StreamClient {
   }
 }
 
-const videoPlayer = new WSAvcPlayer();
+const workerPath = document.querySelector('#broadway-worker').src;
+const videoPlayer = new WSAvcPlayer({
+  useWorker: true,
+  workerFile: workerPath,
+});
 window.videoPlayer = videoPlayer;
 
 const handleVisibilityChange = () => {
