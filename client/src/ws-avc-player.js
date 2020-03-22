@@ -58,7 +58,7 @@ class WSAvcPlayer {
         this.AvcPlayer.decode(frame);
       }
 
-      // requestAnimationFrame(this.shiftFrame);
+      requestAnimationFrame(this.shiftFrame);
       // this.shiftFrameTimeout = setTimeout(this.shiftFrame, 1)
     };
   }
@@ -74,11 +74,9 @@ class WSAvcPlayer {
     if (this.running) {
       this.framesList.push(frame);
       // this.running = true;
-      // clearTimeout(this.shiftFrameTimeout);
-      // this.shiftFrameTimeout = null;
-      // this.shiftFrameTimeout = setTimeout(this.shiftFrame, 1);
-      window.cancelAnimationFrame(this.raf)
-      this.raf = window.requestAnimationFrame(this.shiftFrame);
+      clearTimeout(this.shiftFrameTimeout);
+      this.shiftFrameTimeout = null;
+      this.shiftFrameTimeout = setTimeout(this.shiftFrame, 1);
     }
   }
 
