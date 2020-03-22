@@ -61,7 +61,7 @@ RUN apk update && apk add \
 
 
 # install AdafruitDHT
-RUN mkdir /tmp/dht && cd /tmp/dht && git clone https://github.com/adafruit/Adafruit_Python_DHT.git && cd Adafruit_Python_DHT && python setup.py install --force-pi && cd ../ && rm -rf Adafruit_Python_DHT
+RUN mkdir /tmp/dht && cd /tmp/dht && git clone https://github.com/adafruit/Adafruit_Python_DHT.git && cd Adafruit_Python_DHT && python setup.py install && cd ../ && rm -rf /tmp/dht
 
 #install mon
 RUN mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/tj/mon/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mon
