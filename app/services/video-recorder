@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/opt/vc/bin/raspivid --nopreview --width $VIDEO_WIDTH --height $VIDEO_HEIGHT --framerate $VIDEO_FRAMERATE -rot $VIDEO_ROTATION -br $VIDEO_BRIGHTNESS -o $PIPES_DIR/$VIDEO_RECORDING_PIPE -a 8 --profile baseline --timeout 0 --inline -ih --drc high -v
+/opt/vc/bin/raspivid --nopreview --width $VIDEO_WIDTH --height $VIDEO_HEIGHT --framerate $VIDEO_FRAMERATE -rot $VIDEO_ROTATION -br $VIDEO_BRIGHTNESS -sa $VIDEO_SATURATION -o $PIPES_DIR/$VIDEO_RECORDING_PIPE -a 8 --profile baseline --timeout 0 --inline -ih --drc high -v
