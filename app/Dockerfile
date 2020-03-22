@@ -1,17 +1,17 @@
-FROM balenalib/raspberrypi3-alpine-node as builder
+# FROM balenalib/raspberrypi3-alpine-node as builder
 
-ENV WORKDIR /app
+# ENV WORKDIR /app
 
-RUN apk --no-cache add --virtual native-deps \
-  g++ gcc libgcc libstdc++ linux-headers make python
+# RUN apk --no-cache add --virtual native-deps \
+  # g++ gcc libgcc libstdc++ linux-headers make python
 
-COPY client/package.json client/yarn.lock ${WORKDIR}/
-WORKDIR ${WORKDIR}
-RUN yarn install --network-timeout 1000000
+# COPY client/package.json client/yarn.lock ${WORKDIR}/
+# WORKDIR ${WORKDIR}
+# RUN yarn install --network-timeout 1000000
 
-ADD client ${WORKDIR}
+# ADD client ${WORKDIR}
 
-RUN yarn build
+# RUN yarn build
 
 
 
@@ -56,8 +56,8 @@ RUN apk update && apk add \
 
 
 # TODO: change to /assets
-ENV SITE_ROOT=/www
-COPY --from=builder /${WORKDIR}/dist ${SITE_ROOT}
+# ENV SITE_ROOT=/www
+# COPY --from=builder /${WORKDIR}/dist ${SITE_ROOT}
 
 
 # install AdafruitDHT
@@ -70,14 +70,14 @@ RUN mkdir /tmp/mon && cd /tmp/mon && curl -L# https://github.com/tj/mon/archive/
 RUN mkdir /tmp/mongroup && cd /tmp/mongroup && curl -L# https://github.com/jgallen23/mongroup/archive/master.tar.gz | tar zx --strip 1 && make install && rm -rf /tmp/mongroup
 
 #install fifo_broadcaster
-RUN mkdir /tmp/fifo_broadcaster && cd /tmp/fifo_broadcaster && curl -L# https://github.com/nogizhopaboroda/fifo_broadcaster/releases/download/0.3/fifo_broadcaster_linux_arm.tar.gz | tar zx --strip 1 && mv fifo_broadcaster /usr/local/bin/ws-broadcaster && rm -rf /tmp/fifo_broadcaster
+RUN mkdir /tmp/fifo_broadcaster && cd /tmp/fifo_broadcaster && curl -L# https://github.com/nogizhopaboroda/fifo_broadcaster/releases/download/0.4/fifo_broadcaster_linux_arm.tar.gz | tar zx --strip 1 && mv fifo_broadcaster /usr/local/bin/fifo-broadcaster && rm -rf /tmp/fifo_broadcaster
 
 # install websocat
 RUN curl -L https://github.com/vi/websocat/releases/download/v2.0.0-alpha0/websocat_arm-linux-static -o /usr/local/bin/websocat
 RUN chmod +x /usr/local/bin/websocat
 
 #install caddy server
-RUN curl https://getcaddy.com | bash -s personal
+# RUN curl https://getcaddy.com | bash -s personal
 
 #install gotty
 RUN curl -L# https://github.com/yudai/gotty/releases/download/v2.0.0-alpha.3/gotty_2.0.0-alpha.3_linux_arm.tar.gz | tar zx --strip 1 -C /usr/local/bin/
@@ -85,11 +85,14 @@ RUN chmod +x /usr/local/bin/gotty
 
 
 #create named pipes for streams
-RUN mkdir $PIPES_DIR && cd $PIPES_DIR && \
+RUN mkdir -p $PIPES_DIR && cd $PIPES_DIR && \
     mkfifo $VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE
 
 
 WORKDIR ${WORKDIR}
-ADD app ${WORKDIR}
+ADD . ${WORKDIR}
+
+
+RUN echo 'alias mg="mongroup -c config/mongroup.conf"' >> ~/.bashrc
 
 ENTRYPOINT ["./entrypoint.sh"]

@@ -1,4 +1,4 @@
 #!/bin/sh
 
 NAL_SEPARATOR=00000001
-ws-broadcaster -i $PIPES_DIR/$VIDEO_RECORDING_PIPE -wp $VIDEO_STREAMER_WS_PORT -tp $VIDEO_STREAMER_TCP_PORT -s $NAL_SEPARATOR
+fifo-broadcaster -i $PIPES_DIR/$VIDEO_RECORDING_PIPE --ws-port=$VIDEO_STREAMER_WS_PORT --tcp-port=$VIDEO_STREAMER_TCP_PORT --chunk-separator=$NAL_SEPARATOR --keep-separator=beginning-of-next

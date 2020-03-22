@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     build:
-      context: .
+      context: app
       dockerfile: Dockerfile
     privileged: true
     devices:
@@ -15,11 +15,19 @@ services:
       - /opt/vc/lib:/opt/vc/lib
     ports:
       - 5000:5000
-      - ${HTTP_PORT}:${HTTP_PORT}
       - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}
       - ${AUDIO_STREAMER_TCP_PORT}:${AUDIO_STREAMER_TCP_PORT}
       - ${VIDEO_STREAMER_WS_PORT}:${VIDEO_STREAMER_WS_PORT}
       - ${VIDEO_STREAMER_TCP_PORT}:${VIDEO_STREAMER_TCP_PORT}
+  baby-monitor-client:
+    image: baby-monitor-client:latest
+    env_file:
+      - .env
+    build:
+      context: client
+      dockerfile: Dockerfile
+    ports:
+      - ${HTTP_PORT}:${HTTP_PORT}
   baby-monitor-dev:
     # depends_on:
       # - baby-monitor
@@ -33,7 +41,6 @@ services:
         BASE_IMAGE: baby-monitor:latest
     ports:
       - 5000:5000
-      - ${HTTP_PORT}:${HTTP_PORT}
       - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}
       - ${AUDIO_STREAMER_TCP_PORT}:${AUDIO_STREAMER_TCP_PORT}
       - ${VIDEO_STREAMER_WS_PORT}:${VIDEO_STREAMER_WS_PORT}

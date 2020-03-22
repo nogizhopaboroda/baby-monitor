@@ -1,3 +1,3 @@
 #!/bin/sh
 
-ws-broadcaster -i $PIPES_DIR/$AUDIO_RECORDING_PIPE -wp $AUDIO_STREAMER_WS_PORT -tp $AUDIO_STREAMER_TCP_PORT -b $(expr $AUDIO_BUFFER_SIZE \* 2)
+fifo-broadcaster -i $PIPES_DIR/$AUDIO_RECORDING_PIPE --ws-port=$AUDIO_STREAMER_WS_PORT --tcp-port=$AUDIO_STREAMER_TCP_PORT --buffer-size=$(expr $AUDIO_BUFFER_SIZE \* 2)
