@@ -93,7 +93,7 @@ RUN chmod +x /usr/local/bin/gotty
 
 #create named pipes for streams
 RUN mkdir -p $PIPES_DIR && cd $PIPES_DIR && \
-    mkfifo $VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE
+    mkfifo $VIDEO_RECORDING_PIPE $RAW_VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE
 
 
 WORKDIR ${WORKDIR}
