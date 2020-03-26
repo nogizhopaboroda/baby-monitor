@@ -1,0 +1,4 @@
+#!/bin/sh
+
+NAL_SEPARATOR=00000001
+fifo-broadcaster -i $PIPES_DIR/$VIDEO_RAW_RECORDING_PIPE --ws-port=$RAW_VIDEO_STREAMER_WS_PORT --tcp-port=$RAW_VIDEO_STREAMER_TCP_PORT --buffer-size=$(expr $VIDEO_WIDTH \* $VIDEO_HEIGHT \* 12 \/ 8)

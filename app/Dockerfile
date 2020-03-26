@@ -24,6 +24,7 @@ ENV WORKDIR /app
 ENV PIPES_DIR /streams
 ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
 ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
+ENV RAW_VIDEO_RECORDING_PIPE=video-stream-main.yuv
 
 ## General
 # ENV HTTP_PORT=8080
@@ -47,6 +48,11 @@ ENV VIDEO_SATURATION=-100
 ENV VIDEO_ROTATION=90
 ENV VIDEO_STREAMER_WS_PORT=8001
 ENV VIDEO_STREAMER_TCP_PORT=2001
+
+##Video Raw
+ENV RAW_VIDEO_STREAMER_WS_PORT=8003
+ENV RAW_VIDEO_STREAMER_TCP_PORT=2003
+ENV RAW_VIDEO_FORMAT=yuv
 
 RUN apk update && apk add \
     git g++ gcc libgcc libstdc++ linux-headers make git \
