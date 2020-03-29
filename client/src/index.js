@@ -1,4 +1,5 @@
-import WSAvcPlayer from './ws-avc-player';
+// import WSAvcPlayer from './ws-avc-player';
+import VideoPlayer from './video-player';
 import AudioPlayer from './audio-player';
 import createVisualiser from './visualiser';
 
@@ -30,12 +31,27 @@ class StreamClient {
   }
 }
 
-const workerPath = document.querySelector('#broadway-worker').src;
-const videoPlayer = new WSAvcPlayer({
-  useWorker: true,
-  workerFile: workerPath,
+const videoPlayer = new VideoPlayer({
+  onReady: () => {
+    console.log('Video player is ready');
+    const videoStream = new StreamClient({
+      url: `ws://${HOST}:8001`,
+      onOpen(){
+        videoPlayer.framesList = []
+        console.log('Connected to video stream');
+      },
+      onMessage(data){
+        videoPlayer.feed(data);
+      }
+    });
+  }
 });
+
 window.videoPlayer = videoPlayer;
+
+const canvas = videoPlayer.canvas;
+canvas.id = 'video-canvas';
+$appContainer.appendChild(canvas);
 
 const handleVisibilityChange = () => {
   if (document.hidden) {
@@ -49,21 +65,6 @@ const handleVisibilityChange = () => {
 
 document.addEventListener('visibilitychange', handleVisibilityChange, false);
 
-const videoStream = new StreamClient({
-  url: `ws://${HOST}:8002`,
-  onOpen(){
-    videoPlayer.framesList = []
-    console.log('Connected to video stream');
-  },
-  onMessage(data){
-    videoPlayer.feed(data);
-    // wsavc.feedRaw(data);
-  }
-});
-
-const canvas = videoPlayer.AvcPlayer.canvas;
-canvas.id = 'video-canvas';
-$appContainer.appendChild(canvas);
 
 
 
