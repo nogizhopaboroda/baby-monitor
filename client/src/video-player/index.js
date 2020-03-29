@@ -1,55 +1,28 @@
 import YUVBuffer from 'yuv-buffer';
 import YUVCanvas from 'yuv-canvas';
 
-export default class VideoPlayer {
+export class YUV {
   constructor(options) {
     const {
-      onReady = () => {},
       canvas = document.createElement('canvas'),
+      videoWidth = 320,
+      videoHeight = 210,
+      displayHeight,
+      displayWidth,
     } = options;
-
-    this.decoder = new Worker('./video-player-worker.js');
 
     this.canvas = canvas;
 
     this.yuv = YUVCanvas.attach(this.canvas);
 
-    this.videoStreamId = 1;
-
-    this.decoder.addEventListener('message', e => {
-      const message =
-        /** @type {{type:string, width:number, height:number, data:ArrayBuffer, renderStateId:number}} */ e.data;
-      switch (message.type) {
-        case 'pictureReady':
-          this.onPictureReady(message);
-          break;
-        case 'decoderReady':
-          onReady();
-          break;
-      }
-    });
+    this.videoWidth = videoWidth;
+    this.videoHeight = videoHeight;
+    this.displayHeight = displayHeight;
+    this.displayWidth = displayWidth;
   }
 
   feed(data) {
-    this.decode(data);
-  }
-
-  decode(data) {
-    this.decoder.postMessage(
-      {
-        type: 'decode',
-        data: data.buffer,
-        offset: data.byteOffset,
-        length: data.byteLength,
-        renderStateId: this.videoStreamId,
-      },
-      [data.buffer],
-    );
-  }
-
-  onPictureReady(message) {
-    const {width, height, data} = message;
-    this.onPicture(new Uint8Array(data), width, height);
+    this.onPicture(data, this.videoWidth, videoHeight);
   }
 
   onPicture(buffer, width, height) {
@@ -82,17 +55,79 @@ export default class VideoPlayer {
       // To use 4:2:0 layout, we set the chroma plane dimensions:
       chromaWidth,
       chromaHeight,
+
+      displayHeight: this.displayHeight,
+      displayWidth: this.displayWidth,
     });
 
-    const y = { bytes: yBuffer, stride };
-    const u = { bytes: uBuffer, stride: chromaStride };
-    const v = { bytes: vBuffer, stride: chromaStride };
+    const y = {bytes: yBuffer, stride};
+    const u = {bytes: uBuffer, stride: chromaStride};
+    const v = {bytes: vBuffer, stride: chromaStride};
 
     const frame = YUVBuffer.frame(format, y, u, v);
 
     this.yuv.drawFrame(frame);
   }
+}
 
-  play() {}
-  pause() {}
+export class H264 extends YUV {
+  constructor(options) {
+    super(options);
+
+    const {
+      onReady = () => {},
+      isPlaying = true,
+    } = options;
+
+    this.isPlaying = isPlaying;
+
+    this.decoder = new Worker('./worker.js');
+
+    this.videoStreamId = 1;
+
+    this.decoder.addEventListener('message', e => {
+      const message =
+        /** @type {{type:string, width:number, height:number, data:ArrayBuffer, renderStateId:number}} */ e.data;
+      switch (message.type) {
+        case 'pictureReady':
+          this.onPictureReady(message);
+          break;
+        case 'decoderReady':
+          onReady();
+          break;
+      }
+    });
+  }
+
+  feed(data) {
+    if(!this.isPlaying){
+      return;
+    }
+    this.decode(data);
+  }
+
+  decode(data) {
+    this.decoder.postMessage(
+      {
+        type: 'decode',
+        data: data.buffer,
+        offset: data.byteOffset,
+        length: data.byteLength,
+        renderStateId: this.videoStreamId,
+      },
+      [data.buffer],
+    );
+  }
+
+  onPictureReady(message) {
+    const {width, height, data} = message;
+    this.onPicture(new Uint8Array(data), width, height);
+  }
+
+  play() {
+    this.isPlaying = true;
+  }
+  pause() {
+    this.isPlaying = false;
+  }
 }

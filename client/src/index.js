@@ -1,5 +1,4 @@
-// import WSAvcPlayer from './ws-avc-player';
-import VideoPlayer from './video-player';
+import { H264 as VideoPlayer } from './video-player';
 import AudioPlayer from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
@@ -9,6 +8,7 @@ const AUDIO_STREAMER_WS_PORT = process.env.AUDIO_STREAMER_WS_PORT || 8000;
 const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 8001;
 const RAW_VIDEO_STREAMER_WS_PORT = process.env.RAW_VIDEO_STREAMER_WS_PORT || 8002;
 const TEMP_HUMIDITY_STREAMER_WS_PORT = process.env.TEMP_HUMIDITY_STREAMER_WS_PORT || 8003;
+const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
 
 const $appContainer = document.querySelector('#app-container');
 
@@ -54,8 +54,7 @@ document.addEventListener('visibilitychange', handleVisibilityChange, false);
 const player = new AudioPlayer({
   encoding: '16bitInt',
   channels: 1,
-  sampleRate: 16000,
-  // flushingTime: 0
+  sampleRate: AUDIO_SAMPLE_RATE,
 });
 
 const audioStream = new WebsocketStream({
