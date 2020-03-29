@@ -5,6 +5,7 @@ import {
 import AudioPlayer from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
+import NoSleep from 'nosleep.js';
 
 const HOST = process.env.HOST || window.location.hostname;
 const AUDIO_STREAMER_WS_PORT = process.env.AUDIO_STREAMER_WS_PORT || 8000;
@@ -29,10 +30,12 @@ if (isMobile) {
     videoWidth: parseInt(VIDEO_WIDTH),
     videoHeight: parseInt(VIDEO_HEIGHT),
   });
+  const noSleep = new NoSleep();
   const videoStream = new WebsocketStream({
     url: `ws://${HOST}:${RAW_VIDEO_STREAMER_WS_PORT}`,
     onOpen() {
       console.log('Connected to video stream');
+      noSleep.enable();
     },
     onMessage(data) {
       videoPlayer.feed(data);
