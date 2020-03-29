@@ -17,12 +17,15 @@ export class YUV {
 
     this.videoWidth = videoWidth;
     this.videoHeight = videoHeight;
+
     this.displayHeight = displayHeight;
     this.displayWidth = displayWidth;
   }
 
   feed(data) {
-    this.onPicture(data, this.videoWidth, videoHeight);
+    requestAnimationFrame(() =>
+      this.onPicture(data, this.videoWidth, this.videoHeight),
+    );
   }
 
   onPicture(buffer, width, height) {
@@ -68,16 +71,16 @@ export class YUV {
 
     this.yuv.drawFrame(frame);
   }
+
+  play() {}
+  pause() {}
 }
 
 export class H264 extends YUV {
   constructor(options) {
     super(options);
 
-    const {
-      onReady = () => {},
-      isPlaying = true,
-    } = options;
+    const {onReady = () => {}, isPlaying = true} = options;
 
     this.isPlaying = isPlaying;
 
@@ -100,7 +103,7 @@ export class H264 extends YUV {
   }
 
   feed(data) {
-    if(!this.isPlaying){
+    if (!this.isPlaying) {
       return;
     }
     this.decode(data);
@@ -121,7 +124,9 @@ export class H264 extends YUV {
 
   onPictureReady(message) {
     const {width, height, data} = message;
-    this.onPicture(new Uint8Array(data), width, height);
+    requestAnimationFrame(() =>
+      this.onPicture(new Uint8Array(data), width, height),
+    );
   }
 
   play() {
