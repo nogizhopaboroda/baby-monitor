@@ -13,7 +13,6 @@
     "parcel": "^1.12.4"
   },
   "dependencies": {
-    "broadway-player": "^0.1.1",
     "noise-gate": "0.0.3",
     "tinyh264": "^0.0.5",
     "yuv-buffer": "^1.0.0",

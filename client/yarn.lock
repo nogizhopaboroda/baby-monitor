@@ -1121,11 +1121,6 @@ brfs@^1.2.0:
     static-module "^2.2.0"
     through2 "^2.0.0"
 
-broadway-player@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/broadway-player/-/broadway-player-0.1.1.tgz#68335ae66151e6efb72a0b85db0905a62dd3e094"
-  integrity sha1-aDNa5mFR5u+3KguF2wkFpi3T4JQ=
-
 brorand@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"

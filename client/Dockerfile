@@ -9,7 +9,7 @@ COPY package.json yarn.lock ${WORKDIR}/
 WORKDIR ${WORKDIR}
 RUN yarn install --network-timeout 1000000
 
-ADD . ${WORKDIR}
+ADD src ${WORKDIR}/src
 
 # RUN yarn build
 # ENTRYPOINT ["yarn", "start"]

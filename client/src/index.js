@@ -1,41 +1,24 @@
 // import WSAvcPlayer from './ws-avc-player';
 import VideoPlayer from './video-player';
 import AudioPlayer from './audio-player';
-import createVisualiser from './visualiser';
+import createVisualiser from './audio-player/visualiser';
+import WebsocketStream from './websocket-stream';
 
 const HOST = process.env.HOST || window.location.hostname;
-const PORT = process.env.PORT || window.location.port;
+const AUDIO_STREAMER_WS_PORT = process.env.AUDIO_STREAMER_WS_PORT || 8000;
+const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 8001;
+const RAW_VIDEO_STREAMER_WS_PORT = process.env.RAW_VIDEO_STREAMER_WS_PORT || 8002;
+const TEMP_HUMIDITY_STREAMER_WS_PORT = process.env.TEMP_HUMIDITY_STREAMER_WS_PORT || 8003;
 
 const $appContainer = document.querySelector('#app-container');
 
 
-class StreamClient {
-  constructor(options = {}){
-    this.options = options;
-    this.createSocket();
-  }
-  createSocket(){
-    const { url } = this.options;
-    const ws = this.ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
-
-    ws.onopen = this.onOpen.bind(this);
-    ws.onmessage = this.onMessage.bind(this);
-  }
-  onOpen(){
-    this.options.onOpen && this.options.onOpen();
-  }
-  onMessage(event){
-    const data = new Uint8Array(event.data);
-    this.options.onMessage && this.options.onMessage(data);
-  }
-}
 
 const videoPlayer = new VideoPlayer({
   onReady: () => {
     console.log('Video player is ready');
-    const videoStream = new StreamClient({
-      url: `ws://${HOST}:8001`,
+    const videoStream = new WebsocketStream({
+      url: `ws://${HOST}:${VIDEO_STREAMER_WS_PORT}`,
       onOpen(){
         videoPlayer.framesList = []
         console.log('Connected to video stream');
@@ -75,8 +58,8 @@ const player = new AudioPlayer({
   // flushingTime: 0
 });
 
-const audioStream = new StreamClient({
-  url: `ws://${HOST}:8000`,
+const audioStream = new WebsocketStream({
+  url: `ws://${HOST}:${AUDIO_STREAMER_WS_PORT}`,
   onOpen(){
     console.log('Connected to audio stream');
   },
