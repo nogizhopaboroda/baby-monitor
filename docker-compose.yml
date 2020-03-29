@@ -1,11 +1,11 @@
 version: '3.7'
 services:
-  baby-monitor:
-    image: baby-monitor:latest
+  streamer:
+    image: ninka-monitor:latest
     env_file:
       - .env
     build:
-      context: app
+      context: streamer
       dockerfile: Dockerfile
     privileged: true
     devices:
@@ -23,8 +23,8 @@ services:
       - ${RAW_VIDEO_STREAMER_TCP_PORT}:${RAW_VIDEO_STREAMER_TCP_PORT}
       - ${TEMP_HUMIDITY_STREAMER_WS_PORT}:${TEMP_HUMIDITY_STREAMER_WS_PORT}
       - ${TEMP_HUMIDITY_STREAMER_TCP_PORT}:${TEMP_HUMIDITY_STREAMER_TCP_PORT}
-  baby-monitor-client:
-    image: baby-monitor-client:latest
+  client:
+    image: ninka-monitor-client:latest
     env_file:
       - .env
     build:
@@ -32,17 +32,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - ${HTTP_PORT}:${HTTP_PORT}
-  baby-monitor-dev:
-    # depends_on:
-      # - baby-monitor
-    image: baby-monitor-dev:latest
+
+  streamer-development:
+    image: ninka-monitor-dev:latest
     env_file:
       - .env
     build:
-      context: app-development
-      dockerfile: development.Dockerfile
+      context: streamer-development
+      dockerfile: Dockerfile
       args:
-        BASE_IMAGE: baby-monitor:latest
+        BASE_IMAGE: ninka-monitor:latest
     ports:
       - 5000:5000
       - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}

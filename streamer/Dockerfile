@@ -1,27 +1,10 @@
-# FROM balenalib/raspberrypi3-alpine-node as builder
-
-# ENV WORKDIR /app
-
-# RUN apk --no-cache add --virtual native-deps \
-  # g++ gcc libgcc libstdc++ linux-headers make python
-
-# COPY client/package.json client/yarn.lock ${WORKDIR}/
-# WORKDIR ${WORKDIR}
-# RUN yarn install --network-timeout 1000000
-
-# ADD client ${WORKDIR}
-
-# RUN yarn build
-
-
-
 FROM balenalib/raspberrypi3-alpine
 
 # Set env variables
 
 ENV WORKDIR /app
 
-ENV PIPES_DIR /streams
+ENV PIPES_DIR /tmp/streams
 ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
 ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
 ENV RAW_VIDEO_RECORDING_PIPE=video-stream-main.yuv
@@ -40,8 +23,8 @@ ENV AUDIO_STREAMER_WS_PORT=8000
 ENV AUDIO_STREAMER_TCP_PORT=2000
 
 ##Video
-ENV VIDEO_HEIGHT=549
-ENV VIDEO_WIDTH=960
+ENV VIDEO_HEIGHT=480
+ENV VIDEO_WIDTH=640
 ENV VIDEO_FRAMERATE=20
 ENV VIDEO_BRIGHTNESS=60
 ENV VIDEO_SATURATION=-100
@@ -65,11 +48,6 @@ RUN apk update && apk add \
     tmux htop
 
 
-# TODO: change to /assets
-# ENV SITE_ROOT=/www
-# COPY --from=builder /${WORKDIR}/dist ${SITE_ROOT}
-
-
 # install AdafruitDHT
 RUN mkdir /tmp/dht && cd /tmp/dht && git clone https://github.com/adafruit/Adafruit_Python_DHT.git && cd Adafruit_Python_DHT && python setup.py install && cd ../ && rm -rf /tmp/dht
 
@@ -86,9 +64,6 @@ RUN mkdir /tmp/fifo_broadcaster && cd /tmp/fifo_broadcaster && curl -L# https://
 RUN curl -L https://github.com/vi/websocat/releases/download/v2.0.0-alpha0/websocat_arm-linux-static -o /usr/local/bin/websocat
 RUN chmod +x /usr/local/bin/websocat
 
-#install caddy server
-# RUN curl https://getcaddy.com | bash -s personal
-
 #install gotty
 RUN curl -L# https://github.com/yudai/gotty/releases/download/v2.0.0-alpha.3/gotty_2.0.0-alpha.3_linux_arm.tar.gz | tar zx --strip 1 -C /usr/local/bin/
 RUN chmod +x /usr/local/bin/gotty
@@ -100,9 +75,7 @@ RUN mkdir -p $PIPES_DIR && cd $PIPES_DIR && \
 
 
 WORKDIR ${WORKDIR}
-ADD . ${WORKDIR}
+ADD src ${WORKDIR}
 
-
-RUN echo 'alias mg="mongroup -c config/mongroup.conf"' >> ~/.bashrc
 
 ENTRYPOINT ["./entrypoint.sh"]
