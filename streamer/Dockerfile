@@ -10,17 +10,19 @@ ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
 ENV RAW_VIDEO_RECORDING_PIPE=video-stream-main.yuv
 
 ## General
-# ENV HTTP_PORT=8080
 ENV WEBSHELL_PORT=5000
 
 ## Audio
-ENV AUDIO_SAMPLE_RATE=16000
+ENV AUDIO_SAMPLE_RATE=44100
 ENV AUDIO_FORMAT=S16_LE
 ENV AUDIO_BUFFER_SIZE=8000
 ENV AUDIO_CHANNELS=1
 ENV AUDIO_FILE_TYPE=raw
 ENV AUDIO_STREAMER_WS_PORT=8000
 ENV AUDIO_STREAMER_TCP_PORT=2000
+
+ENV AUDIODEV=hw:1,0
+ENV AUDIODRIVER=alsa
 
 ##Video
 ENV VIDEO_HEIGHT=480
@@ -44,7 +46,7 @@ RUN apk update && apk add \
     git g++ gcc libgcc libstdc++ linux-headers make git \
     python py-pip python-dev \
     raspberrypi \
-    alsa-utils ffmpeg \
+    alsa-utils sox ffmpeg \
     tmux htop
 
 
