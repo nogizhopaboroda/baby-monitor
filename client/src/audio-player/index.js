@@ -51,7 +51,8 @@ export default class PCMPlayer {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.gainNode = this.audioCtx.createGain();
 
-    this.gainNode.gain.value = dBFSToGain(35); //30db
+    // this.gainNode.gain.value = dBFSToGain(35); //30db
+    this.gainNode.gain.value = 1; //30db
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
     this.gainNode.connect(this.noiseGate);
