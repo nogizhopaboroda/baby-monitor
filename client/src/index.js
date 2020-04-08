@@ -8,17 +8,17 @@ import WebsocketStream from './websocket-stream';
 import NoSleep from 'nosleep.js';
 
 const HOST = process.env.HOST || window.location.hostname;
-const AUDIO_STREAMER_WS_PORT = process.env.AUDIO_STREAMER_WS_PORT || 8000;
+const RAW_AUDIO_STREAMER_WS_PORT = process.env.RAW_AUDIO_STREAMER_WS_PORT || 8001;
 const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
 
-const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 8001;
+const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 9000;
 const RAW_VIDEO_STREAMER_WS_PORT =
-  process.env.RAW_VIDEO_STREAMER_WS_PORT || 8002;
+  process.env.RAW_VIDEO_STREAMER_WS_PORT || 9001;
 const VIDEO_HEIGHT = process.env.VIDEO_HEIGHT || 640;
 const VIDEO_WIDTH = process.env.VIDEO_WIDTH || 480;
 
 const TEMP_HUMIDITY_STREAMER_WS_PORT =
-  process.env.TEMP_HUMIDITY_STREAMER_WS_PORT || 8003;
+  process.env.TEMP_HUMIDITY_STREAMER_WS_PORT || 7000;
 
 const $appContainer = document.querySelector('#app-container');
 
@@ -83,7 +83,7 @@ const player = new AudioPlayer({
 });
 
 const audioStream = new WebsocketStream({
-  url: `ws://${HOST}:${AUDIO_STREAMER_WS_PORT}`,
+  url: `ws://${HOST}:${RAW_AUDIO_STREAMER_WS_PORT}`,
   onOpen() {
     console.log('Connected to audio stream');
   },
