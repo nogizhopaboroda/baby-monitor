@@ -1,0 +1,3 @@
+#!/bin/sh
+
+fifo-broadcaster -i $PIPES_DIR/$RAW_AUDIO_RECORDING_PIPE --ws-port=$RAW_AUDIO_STREAMER_WS_PORT --tcp-port=$RAW_AUDIO_STREAMER_TCP_PORT --buffer-size=$(expr $AUDIO_BUFFER_SIZE \* 2)
