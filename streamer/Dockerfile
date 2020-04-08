@@ -15,6 +15,7 @@ ENV RAW_AUDIO_RECORDING_PIPE=audio-stream-main.raw
 
 ## General
 ENV WEBSHELL_PORT=5000
+ENV TERM=xterm-256color
 
 ## Audio
 ENV AUDIO_SAMPLE_RATE=44100
