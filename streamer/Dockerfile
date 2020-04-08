@@ -5,10 +5,13 @@ FROM balenalib/raspberrypi3-alpine
 ENV WORKDIR /app
 
 ENV PIPES_DIR /tmp/streams
+
 ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
-ENV AUDIO_RECORDING_PIPE=audio-stream-main.raw
+ENV AUDIO_RECORDING_PIPE=audio-stream-main.aac
+
 ENV RAW_VIDEO_RECORDING_PIPE=video-stream-main.yuv
-ENV RAW_AUDIO_RECORDING_PIPE=audio-stream-main.aac
+ENV RAW_AUDIO_RECORDING_PIPE=audio-stream-main.raw
+
 
 ## General
 ENV WEBSHELL_PORT=5000
