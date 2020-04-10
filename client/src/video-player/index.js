@@ -111,6 +111,10 @@ export class H264 extends YUV {
 
     this.videoStreamId = 1;
 
+    this.buffer = [];
+    this.isProcessing = false;
+    this.isStopped = false;
+
     this.decoder.addEventListener('message', e => {
       const message =
         /** @type {{type:string, width:number, height:number, data:ArrayBuffer, renderStateId:number}} */ e.data;
@@ -126,10 +130,22 @@ export class H264 extends YUV {
   }
 
   feed(data) {
-    if (!this.isPlaying) {
+    if(this.isStopped){
       return;
     }
-    this.decode(data);
+    this.buffer.push(data);
+    if(!this.isProcessing){
+      this.processBuffer();
+    }
+  }
+
+  processBuffer(){
+    const frame = this.buffer.shift();
+    if(!frame){
+      this.isProcessing = false;
+      return;
+    }
+    this.decode(frame);
   }
 
   decode(data) {
@@ -146,16 +162,9 @@ export class H264 extends YUV {
   }
 
   onPictureReady(message) {
+    this.isProcessing = true;
     const {width, height, data} = message;
-    requestAnimationFrame(() =>
-      this.onPicture(new Uint8Array(data), width, height),
-    );
-  }
-
-  play() {
-    this.isPlaying = true;
-  }
-  pause() {
-    this.isPlaying = false;
+    this.onPicture(new Uint8Array(data), width, height);
+    requestAnimationFrame(this.processBuffer.bind(this));
   }
 }
