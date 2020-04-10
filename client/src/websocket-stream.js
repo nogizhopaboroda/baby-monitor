@@ -1,24 +1,37 @@
 export default class WebsocketStream {
-  constructor(options = {}){
+  get binaryType() {
+    return 'arraybuffer';
+  }
+
+  get url() {
+    return null;
+  }
+
+  constructor(options = {}) {
     this.options = options;
     this.createSocket();
   }
-  createSocket(){
-    const { url } = this.options;
-    const ws = this.ws = new WebSocket(url);
-    ws.binaryType = 'arraybuffer';
+  createSocket() {
+    const url = this.url || this.options.url;
+    const ws = (this.ws = new WebSocket(url));
+    ws.binaryType = this.binaryType;
 
     ws.onopen = this.onOpen.bind(this);
     ws.onmessage = this.onMessage.bind(this);
     ws.onerror = this.onError.bind(this);
   }
-  onOpen(){
+  onOpen() {
     this.options.onOpen && this.options.onOpen();
   }
-  onMessage(event){
-    const data = new Uint8Array(event.data);
-    this.options.onMessage && this.options.onMessage(data);
+  processData(data) {
+    return new Uint8Array(data);
   }
-  onError(event){
+  onData(data) {
+    this.options.onData && this.options.onData(data);
   }
+  onMessage(event) {
+    const data = this.processData(event.data);
+    this.onData(data);
+  }
+  onError(event) {}
 }

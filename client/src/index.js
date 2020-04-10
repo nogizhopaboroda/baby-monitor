@@ -2,14 +2,16 @@ import {
   H264 as DesktopVideoPlayer,
   YUV as MobileVideoPlayer,
 } from './video-player';
-import AudioPlayer from './audio-player';
+import RawAudioPlayer from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
 import NoSleep from 'nosleep.js';
 
 const HOST = process.env.HOST || window.location.hostname;
-const RAW_AUDIO_STREAMER_WS_PORT = process.env.RAW_AUDIO_STREAMER_WS_PORT || 8001;
+const RAW_AUDIO_STREAMER_WS_PORT =
+  process.env.RAW_AUDIO_STREAMER_WS_PORT || 8001;
 const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
+const AUDIO_CHANNELS = process.env.AUDIO_CHANNELS || 1;
 
 const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 9000;
 const RAW_VIDEO_STREAMER_WS_PORT =
@@ -25,36 +27,45 @@ const $appContainer = document.querySelector('#app-container');
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 let videoPlayer;
 
-if (isMobile) {
+class RawVideoStream extends WebsocketStream {
+  get url() {
+    return `ws://${HOST}:${RAW_VIDEO_STREAMER_WS_PORT}`;
+  }
+
+  onOpen() {
+    console.log('Connected to raw video stream');
+  }
+}
+
+class H264VideoStream extends WebsocketStream {
+  get url() {
+    return `ws://${HOST}:${VIDEO_STREAMER_WS_PORT}`;
+  }
+
+  onOpen() {
+    console.log('Connected to H264 video stream');
+  }
+}
+
+if (true) {
+  const noSleep = new NoSleep();
+  noSleep.enable();
+
   videoPlayer = new MobileVideoPlayer({
     videoWidth: parseInt(VIDEO_WIDTH),
     videoHeight: parseInt(VIDEO_HEIGHT),
   });
-  const noSleep = new NoSleep();
-  const videoStream = new WebsocketStream({
-    url: `ws://${HOST}:${RAW_VIDEO_STREAMER_WS_PORT}`,
-    onOpen() {
-      console.log('Connected to video stream');
-      noSleep.enable();
-    },
-    onMessage(data) {
-      videoPlayer.feed(data);
-    },
+
+  const videoStream = new RawVideoStream({
+    onData: data => videoPlayer.feed(data),
   });
 } else {
   videoPlayer = new DesktopVideoPlayer({
-    onReady: () => {
-      console.log('Video player is ready');
-      const videoStream = new WebsocketStream({
-        url: `ws://${HOST}:${VIDEO_STREAMER_WS_PORT}`,
-        onOpen() {
-          console.log('Connected to video stream');
-        },
-        onMessage(data) {
-          videoPlayer.feed(data);
-        },
-      });
-    },
+    onReady: () => console.log('Video player is ready'),
+  });
+
+  const videoStream = new H264VideoStream({
+    onData: data => videoPlayer.feed(data),
   });
 }
 
@@ -76,27 +87,31 @@ const handleVisibilityChange = () => {
 
 document.addEventListener('visibilitychange', handleVisibilityChange, false);
 
-const player = new AudioPlayer({
+class RawAudioStream extends WebsocketStream {
+  get url() {
+    return `ws://${HOST}:${RAW_AUDIO_STREAMER_WS_PORT}`;
+  }
+
+  onOpen() {
+    console.log('Connected to raw audio stream');
+  }
+}
+
+const audioPlayer = new RawAudioPlayer({
   encoding: '16bitInt',
-  channels: 1,
+  channels: parseInt(AUDIO_CHANNELS),
   sampleRate: parseInt(AUDIO_SAMPLE_RATE),
 });
 
-const audioStream = new WebsocketStream({
-  url: `ws://${HOST}:${RAW_AUDIO_STREAMER_WS_PORT}`,
-  onOpen() {
-    console.log('Connected to audio stream');
-  },
-  onMessage(data) {
-    player.feed(data);
-  },
+const audioStream = new RawAudioStream({
+  onData: data => audioPlayer.feed(data),
 });
 
-window.player = player;
+window.audioPlayer = audioPlayer;
 
 const $audioLevel = document.querySelector('#audio-level');
 const $visualisationCanvas = createVisualiser({
-  stream: player.gainNode,
-  audioContext: player.audioCtx,
+  stream: audioPlayer.gainNode,
+  audioContext: audioPlayer.audioCtx,
   canvas: $audioLevel,
 });
