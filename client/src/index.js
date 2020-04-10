@@ -47,7 +47,7 @@ class H264VideoStream extends WebsocketStream {
   }
 }
 
-if (true) {
+if (isMobile) {
   const noSleep = new NoSleep();
   noSleep.enable();
 
