@@ -115,3 +115,29 @@ const $visualisationCanvas = createVisualiser({
   audioContext: audioPlayer.audioCtx,
   canvas: $audioLevel,
 });
+
+
+class TempHumidityStream extends WebsocketStream {
+  get url() {
+    return `ws://${HOST}:${TEMP_HUMIDITY_STREAMER_WS_PORT}`;
+  }
+
+  processData(data){
+    return String.fromCharCode.apply(null, new Uint8Array(data))
+  }
+
+  onOpen() {
+    console.log('Connected to temp/humidity stream');
+  }
+}
+
+const $tempHumiduty = document.querySelector('#temp-humidity');
+
+const tempHumidityStream = new TempHumidityStream({
+  onData: (data) => {
+    const [temp, humidity] = data.split(' ');
+    $tempHumiduty.innerHTML = `
+      <div>${temp}°</div>
+      <div>${humidity}%</div>`;
+  }
+})

@@ -32,3 +32,10 @@ html, body {
   margin: 0 auto;
   height: 100%;
 }
+
+#temp-humidity {
+  position: absolute;
+  top: 3%;
+  left: 0.2rem;
+  color: #fff;
+}
