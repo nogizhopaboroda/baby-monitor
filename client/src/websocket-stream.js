@@ -10,6 +10,7 @@ export default class WebsocketStream {
 
     ws.onopen = this.onOpen.bind(this);
     ws.onmessage = this.onMessage.bind(this);
+    ws.onerror = this.onError.bind(this);
   }
   onOpen(){
     this.options.onOpen && this.options.onOpen();
@@ -17,5 +18,7 @@ export default class WebsocketStream {
   onMessage(event){
     const data = new Uint8Array(event.data);
     this.options.onMessage && this.options.onMessage(data);
+  }
+  onError(event){
   }
 }
