@@ -20,12 +20,31 @@ export class YUV {
 
     this.displayHeight = displayHeight;
     this.displayWidth = displayWidth;
+
+    this.buffer = [];
+    this.isProcessing = false;
+    this.isStopped = false;
   }
 
   feed(data) {
-    requestAnimationFrame(() =>
-      this.onPicture(data, this.videoWidth, this.videoHeight),
-    );
+    if(this.isStopped){
+      return;
+    }
+    this.buffer.push(data);
+    if(!this.isProcessing){
+      this.isProcessing = true;
+      requestAnimationFrame(this.processBuffer.bind(this));
+    }
+  }
+
+  processBuffer(){
+    const frame = this.buffer.shift();
+    if(!frame){
+      this.isProcessing = false;
+      return;
+    }
+    this.onPicture(frame, this.videoWidth, this.videoHeight);
+    requestAnimationFrame(this.processBuffer.bind(this));
   }
 
   onPicture(buffer, width, height) {
@@ -72,8 +91,12 @@ export class YUV {
     this.yuv.drawFrame(frame);
   }
 
-  play() {}
-  pause() {}
+  play() {
+    this.isStopped = false;
+  }
+  pause() {
+    this.isStopped = true;
+  }
 }
 
 export class H264 extends YUV {
