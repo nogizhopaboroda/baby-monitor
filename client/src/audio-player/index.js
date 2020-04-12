@@ -51,14 +51,24 @@ export default class PCMPlayer {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.gainNode = this.audioCtx.createGain();
 
-    // this.gainNode.gain.value = dBFSToGain(35); //30db
-    this.gainNode.gain.value = 1; //30db
+    this.gainNode.gain.value = 1;
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
-    this.gainNode.connect(this.noiseGate);
-    this.noiseGate.connect(this.audioCtx.destination);
 
-    // this.gainNode.connect(this.audioCtx.destination);
+    this.gainNode.connect(this.audioCtx.destination);
+
+  }
+
+  setFiltering(state = true){
+    if(state){
+      this.gainNode.disconnect(this.audioCtx.destination);
+      this.gainNode.connect(this.noiseGate);
+      this.noiseGate.connect(this.audioCtx.destination);
+    } else {
+      this.gainNode.disconnect(this.noiseGate);
+      this.noiseGate.disconnect(this.audioCtx.destination);
+      this.gainNode.connect(this.audioCtx.destination);
+    }
   }
 
   isTypedArray(data) {
