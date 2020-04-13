@@ -6,6 +6,7 @@ import RawAudioPlayer from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
 import NoSleep from 'nosleep.js';
+import {fullScreen, fullScreenExit} from './icons';
 
 const HOST = process.env.HOST || window.location.hostname;
 const RAW_AUDIO_STREAMER_WS_PORT =
@@ -48,9 +49,6 @@ class H264VideoStream extends WebsocketStream {
 }
 
 if (isMobile) {
-  const noSleep = new NoSleep();
-  noSleep.enable();
-
   videoPlayer = new MobileVideoPlayer({
     videoWidth: parseInt(VIDEO_WIDTH),
     videoHeight: parseInt(VIDEO_HEIGHT),
@@ -116,14 +114,13 @@ const $visualisationCanvas = createVisualiser({
   canvas: $audioLevel,
 });
 
-
 class TempHumidityStream extends WebsocketStream {
   get url() {
     return `ws://${HOST}:${TEMP_HUMIDITY_STREAMER_WS_PORT}`;
   }
 
-  processData(data){
-    return String.fromCharCode.apply(null, new Uint8Array(data))
+  processData(data) {
+    return String.fromCharCode.apply(null, new Uint8Array(data));
   }
 
   onOpen() {
@@ -134,10 +131,41 @@ class TempHumidityStream extends WebsocketStream {
 const $tempHumiduty = document.querySelector('#temp-humidity');
 
 const tempHumidityStream = new TempHumidityStream({
-  onData: (data) => {
+  onData: data => {
     const [temp, humidity] = data.split(' ');
     $tempHumiduty.innerHTML = `
       <div>${temp}°</div>
       <div>${humidity}%</div>`;
+  },
+});
+
+
+const noSleep = new NoSleep();
+const isFullScreen = () => !!document.fullscreenElement;
+
+const $fullScreenButton = document.querySelector('#fullscreen-button');
+
+$fullScreenButton.innerHTML = fullScreen;
+
+$fullScreenButton.addEventListener('click', () => {
+  if (isFullScreen()) {
+    document.exitFullscreen().then(() => {
+      noSleep.disable();
+      screen.orientation.unlock();
+    });
+  } else {
+    document.documentElement.requestFullscreen().then(() => {
+      noSleep.enable();
+      screen.orientation.lock('landscape');
+    });
   }
-})
+});
+
+
+document.addEventListener('fullscreenchange', () => {
+  if (isFullScreen()) {
+    $fullScreenButton.innerHTML = fullScreenExit;
+  } else {
+    $fullScreenButton.innerHTML = fullScreen;
+  }
+});
