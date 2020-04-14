@@ -14,6 +14,7 @@ body {
 #app-container {
   position: relative;
   height: 100%;
+  font-family: Helvetica;
 }
 
 #audio-level {
@@ -45,7 +46,6 @@ body {
 }
 
 #temp-humidity {
-  font-family: Helvetica;
   color: #fff;
   position: absolute;
   z-index: 1;
@@ -53,22 +53,46 @@ body {
   bottom: 2em;
 }
 
-#fullscreen-button {
+.app-icon {
   cursor: pointer;
-  position: absolute;
-  z-index: 1;
   width: 3em;
   height: 3em;
-  right: 3%;
-  bottom: 2em;
   padding: 0;
   background: none;
   border: none;
 }
 
-#fullscreen-button svg {
+.app-icon svg {
   display: block;
   width: 100%;
   height: 100%;
   fill: #fff;
+}
+
+#fullscreen-button {
+  position: absolute;
+  z-index: 1;
+  right: 3%;
+  bottom: 2em;
+}
+
+#volume {
+  position: absolute;
+  z-index: 1;
+  right: 3%;
+  top: 2em;
+}
+
+#volume > * {
+  display: block;
+  margin: auto;
+}
+
+#volume-value {
+  text-align: center;
+  height: auto;
+  width: 1em;
+  padding: 1em 0;
+  font-size: 2em;
+  color: #fff;
 }

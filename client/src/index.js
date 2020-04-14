@@ -6,7 +6,7 @@ import RawAudioPlayer from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
 import NoSleep from 'nosleep.js';
-import {fullScreen, fullScreenExit} from './icons';
+import {fullScreen, fullScreenExit, volumeUp, volumeDown} from './icons';
 
 const HOST = process.env.HOST || window.location.hostname;
 const RAW_AUDIO_STREAMER_WS_PORT =
@@ -128,6 +128,8 @@ class TempHumidityStream extends WebsocketStream {
   }
 }
 
+/* temp humidity */
+
 const $tempHumiduty = document.querySelector('#temp-humidity');
 
 const tempHumidityStream = new TempHumidityStream({
@@ -139,6 +141,8 @@ const tempHumidityStream = new TempHumidityStream({
   },
 });
 
+
+/* fullscreen */
 
 const noSleep = new NoSleep();
 const isFullScreen = () => !!document.fullscreenElement;
@@ -169,3 +173,28 @@ document.addEventListener('fullscreenchange', () => {
     $fullScreenButton.innerHTML = fullScreen;
   }
 });
+
+/* volume */
+
+
+const $volumeValue = document.querySelector('#volume-value');
+const updateValue = () => {
+  $volumeValue.innerText = audioPlayer.gainNode.gain.value;
+};
+
+const $volumeUp = document.querySelector('#volume-up');
+$volumeUp.innerHTML = volumeUp;
+$volumeUp.addEventListener('click', () => {
+  audioPlayer.gainNode.gain.value += 1;
+  updateValue();
+});
+
+const $volumeDown = document.querySelector('#volume-down');
+$volumeDown.innerHTML = volumeDown;
+$volumeDown.addEventListener('click', () => {
+  audioPlayer.gainNode.gain.value && (audioPlayer.gainNode.gain.value -= 1);
+  updateValue();
+});
+
+updateValue();
+
