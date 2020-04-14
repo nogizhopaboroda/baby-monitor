@@ -2,7 +2,7 @@
 
 import NoiseGateNode from 'noise-gate';
 
-const dBFSToGain = (dbfs) => Math.pow(10, dbfs / 20);
+const dBFSToGain = dbfs => Math.pow(10, dbfs / 20);
 
 export default class PCMPlayer {
   constructor(options) {
@@ -15,7 +15,7 @@ export default class PCMPlayer {
       channels: 1,
       sampleRate: 8000,
     };
-    this.options = { ...defaults, ...option };
+    this.options = {...defaults, ...option};
     this.maxValue = this.getMaxValue();
     this.typedArray = this.getTypedArray();
     this.createContext();
@@ -49,18 +49,23 @@ export default class PCMPlayer {
 
   createContext() {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    this.mediaStreamDestination = this.audioCtx.createMediaStreamDestination();
+    this.mediaStreamSource = this.audioCtx.createMediaStreamSource(
+      this.mediaStreamDestination.stream,
+    );
+
     this.gainNode = this.audioCtx.createGain();
 
     this.gainNode.gain.value = 1;
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
 
+    this.mediaStreamSource.connect(this.gainNode);
     this.gainNode.connect(this.audioCtx.destination);
-
   }
 
-  setFiltering(state = true){
-    if(state){
+  setFiltering(state = true) {
+    if (state) {
       this.gainNode.disconnect(this.audioCtx.destination);
       this.gainNode.connect(this.noiseGate);
       this.noiseGate.connect(this.audioCtx.destination);
@@ -136,7 +141,7 @@ export default class PCMPlayer {
     }
 
     bufferSource.buffer = audioBuffer;
-    bufferSource.connect(this.gainNode);
+    bufferSource.connect(this.mediaStreamDestination);
     bufferSource.start(this.audioCtx.currentTime);
   }
 }

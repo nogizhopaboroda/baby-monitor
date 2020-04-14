@@ -109,7 +109,7 @@ window.audioPlayer = audioPlayer;
 
 const $audioLevel = document.querySelector('#audio-level');
 const $visualisationCanvas = createVisualiser({
-  stream: audioPlayer.gainNode,
+  stream: audioPlayer.mediaStreamSource,
   audioContext: audioPlayer.audioCtx,
   canvas: $audioLevel,
 });
