@@ -4,7 +4,7 @@ FROM balenalib/raspberrypi3-alpine
 
 ENV WORKDIR /app
 
-ENV PIPES_DIR /tmp/streams
+ENV PIPES_DIR /streams
 
 ENV VIDEO_RECORDING_PIPE=video-stream-main.h264
 ENV AUDIO_RECORDING_PIPE=audio-stream-main.aac
@@ -84,10 +84,6 @@ RUN chmod +x /usr/local/bin/websocat
 RUN curl -L# https://github.com/yudai/gotty/releases/download/v2.0.0-alpha.3/gotty_2.0.0-alpha.3_linux_arm.tar.gz | tar zx --strip 1 -C /usr/local/bin/
 RUN chmod +x /usr/local/bin/gotty
 
-
-#create named pipes for streams
-RUN mkdir -p $PIPES_DIR && cd $PIPES_DIR && \
-    mkfifo $VIDEO_RECORDING_PIPE $RAW_VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE $RAW_AUDIO_RECORDING_PIPE $RAW_AUDIO_RECORDING_PIPE_1
 
 
 WORKDIR ${WORKDIR}

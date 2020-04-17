@@ -14,6 +14,8 @@ services:
       - /dev/snd/:/dev/snd/
       - /opt/vc/lib:/opt/vc/lib
       - /etc/localtime:/etc/localtime:ro
+    tmpfs:
+      - /streams
     ports:
       - 5000:5000
       - ${AUDIO_STREAMER_WS_PORT}:${AUDIO_STREAMER_WS_PORT}

@@ -1,5 +1,11 @@
 #!/bin/sh
 
+echo "creating stream named pipes"
+
+mkdir -p $PIPES_DIR && cd $PIPES_DIR
+mkfifo $VIDEO_RECORDING_PIPE $RAW_VIDEO_RECORDING_PIPE $AUDIO_RECORDING_PIPE $RAW_AUDIO_RECORDING_PIPE $RAW_AUDIO_RECORDING_PIPE_1
+
+
 echo "starting the monitor"
 
 mongroup -c $WORKDIR/mongroup.conf start
