@@ -84,6 +84,8 @@ RUN chmod +x /usr/local/bin/websocat
 RUN curl -L# https://github.com/yudai/gotty/releases/download/v2.0.0-alpha.3/gotty_2.0.0-alpha.3_linux_arm.tar.gz | tar zx --strip 1 -C /usr/local/bin/
 RUN chmod +x /usr/local/bin/gotty
 
+#create named pipes directory
+RUN mkdir -p $PIPES_DIR
 
 
 WORKDIR ${WORKDIR}
