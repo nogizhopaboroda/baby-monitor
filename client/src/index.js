@@ -2,13 +2,15 @@ import {
   H264 as DesktopVideoPlayer,
   YUV as MobileVideoPlayer,
 } from './video-player';
-import RawAudioPlayer from './audio-player';
+import { PCMPlayer, MSEPlayer } from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
 import NoSleep from 'nosleep.js';
 import {fullScreen, fullScreenExit, volumeUp, volumeDown} from './icons';
 
 const HOST = process.env.HOST || window.location.hostname;
+const AUDIO_STREAMER_WS_PORT =
+  process.env.AUDIO_STREAMER_WS_PORT || 8000;
 const RAW_AUDIO_STREAMER_WS_PORT =
   process.env.RAW_AUDIO_STREAMER_WS_PORT || 8001;
 const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
@@ -95,7 +97,21 @@ class RawAudioStream extends WebsocketStream {
   }
 }
 
-const audioPlayer = new RawAudioPlayer({
+class AACAudioStream extends WebsocketStream {
+  get url() {
+    return `ws://${HOST}:${AUDIO_STREAMER_WS_PORT}`;
+  }
+
+  onOpen() {
+    console.log('Connected to AAC audio stream');
+  }
+
+  processData(data) {
+    return data;
+  }
+}
+
+const audioPlayer = new PCMPlayer({
   encoding: '16bitInt',
   channels: parseInt(AUDIO_CHANNELS),
   sampleRate: parseInt(AUDIO_SAMPLE_RATE),
@@ -104,6 +120,12 @@ const audioPlayer = new RawAudioPlayer({
 const audioStream = new RawAudioStream({
   onData: data => audioPlayer.feed(data),
 });
+
+// const aacAudioPlayer = new MSEPlayer({ mimeType = 'audio/aac' });
+
+// const aacAudioStream = new AACAudioStream({
+  // onData: data => aacAudioPlayer.feed(data),
+// });
 
 window.audioPlayer = audioPlayer;
 
