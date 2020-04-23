@@ -5,9 +5,9 @@ import {
 import { PCMPlayer, MSEPlayer } from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
-import NoSleep from 'nosleep.js';
-import {fullScreen, fullScreenExit, volumeUp, volumeDown} from './icons';
+import {volumeUp, volumeDown} from './icons';
 
+import './components/fullscreen-button';
 import './components/temperature-humidity';
 
 const HOST = process.env.HOST || window.location.hostname;
@@ -160,36 +160,3 @@ $volumeDown.addEventListener('click', () => {
 });
 
 updateValue();
-
-
-/* fullscreen */
-
-const noSleep = new NoSleep();
-const isFullScreen = () => !!document.fullscreenElement;
-
-const $fullScreenButton = document.querySelector('#fullscreen-button');
-
-$fullScreenButton.innerHTML = fullScreen;
-
-$fullScreenButton.addEventListener('click', () => {
-  if (isFullScreen()) {
-    document.exitFullscreen().then(() => {
-      noSleep.disable();
-      screen.orientation.unlock();
-    });
-  } else {
-    document.documentElement.requestFullscreen().then(() => {
-      noSleep.enable();
-      screen.orientation.lock('landscape');
-    });
-  }
-});
-
-
-document.addEventListener('fullscreenchange', () => {
-  if (isFullScreen()) {
-    $fullScreenButton.innerHTML = fullScreenExit;
-  } else {
-    $fullScreenButton.innerHTML = fullScreen;
-  }
-});
