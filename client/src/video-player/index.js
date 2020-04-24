@@ -1,7 +1,7 @@
 import YUVBuffer from 'yuv-buffer';
 import YUVCanvas from 'yuv-canvas';
 
-export class YUV {
+export class YUVPlayer {
   constructor(options) {
     const {
       canvas = document.createElement('canvas'),
@@ -99,7 +99,7 @@ export class YUV {
   }
 }
 
-export class H264 extends YUV {
+export class H264Player extends YUVPlayer {
   constructor(options) {
     super(options);
 

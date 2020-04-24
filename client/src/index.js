@@ -1,14 +1,12 @@
-import {
-  H264 as DesktopVideoPlayer,
-  YUV as MobileVideoPlayer,
-} from './video-player';
 import { PCMPlayer, MSEPlayer } from './audio-player';
 import createVisualiser from './audio-player/visualiser';
 import WebsocketStream from './websocket-stream';
 import {volumeUp, volumeDown} from './icons';
 
+import './components/video-player';
 import './components/fullscreen-button';
 import './components/temperature-humidity';
+
 
 const HOST = process.env.HOST || window.location.hostname;
 const AUDIO_STREAMER_WS_PORT =
@@ -18,62 +16,19 @@ const RAW_AUDIO_STREAMER_WS_PORT =
 const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
 const AUDIO_CHANNELS = process.env.AUDIO_CHANNELS || 1;
 
-const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 9000;
-const RAW_VIDEO_STREAMER_WS_PORT =
-  process.env.RAW_VIDEO_STREAMER_WS_PORT || 9001;
-const VIDEO_HEIGHT = process.env.VIDEO_HEIGHT || 640;
-const VIDEO_WIDTH = process.env.VIDEO_WIDTH || 480;
+
 
 
 const $appContainer = document.querySelector('#app-container');
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-let videoPlayer;
 
-class RawVideoStream extends WebsocketStream {
-  get url() {
-    return `ws://${HOST}:${RAW_VIDEO_STREAMER_WS_PORT}`;
-  }
+const videoPlayerElement = document.createElement('video-player');
+videoPlayerElement.setAttribute('type', isMobile ? 'yuv' : 'h264');
+$appContainer.appendChild(videoPlayerElement);
 
-  onOpen() {
-    console.log('Connected to raw video stream');
-  }
-}
+const videoPlayer = videoPlayerElement.player;
 
-class H264VideoStream extends WebsocketStream {
-  get url() {
-    return `ws://${HOST}:${VIDEO_STREAMER_WS_PORT}`;
-  }
-
-  onOpen() {
-    console.log('Connected to H264 video stream');
-  }
-}
-
-if (isMobile) {
-  videoPlayer = new MobileVideoPlayer({
-    videoWidth: parseInt(VIDEO_WIDTH),
-    videoHeight: parseInt(VIDEO_HEIGHT),
-  });
-
-  const videoStream = new RawVideoStream({
-    onData: data => videoPlayer.feed(data),
-  });
-} else {
-  videoPlayer = new DesktopVideoPlayer({
-    onReady: () => console.log('Video player is ready'),
-  });
-
-  const videoStream = new H264VideoStream({
-    onData: data => videoPlayer.feed(data),
-  });
-}
-
-window.videoPlayer = videoPlayer;
-
-const canvas = videoPlayer.canvas;
-canvas.id = 'video-canvas';
-$appContainer.appendChild(canvas);
 
 const handleVisibilityChange = () => {
   if (document.hidden) {
