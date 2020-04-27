@@ -133,19 +133,7 @@ export class H264Player extends YUVPlayer {
     if(this.isStopped){
       return;
     }
-    this.buffer.push(data);
-    if(!this.isProcessing){
-      this.processBuffer();
-    }
-  }
-
-  processBuffer(){
-    const frame = this.buffer.shift();
-    if(!frame){
-      this.isProcessing = false;
-      return;
-    }
-    this.decode(frame);
+    this.decode(data);
   }
 
   decode(data) {
@@ -162,9 +150,9 @@ export class H264Player extends YUVPlayer {
   }
 
   onPictureReady(message) {
-    this.isProcessing = true;
     const {width, height, data} = message;
-    this.onPicture(new Uint8Array(data), width, height);
-    requestAnimationFrame(this.processBuffer.bind(this));
+    this.videoWidth = width;
+    this.videoHeight = height;
+    super.feed(new Uint8Array(data));
   }
 }
