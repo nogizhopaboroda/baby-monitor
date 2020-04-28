@@ -5,7 +5,6 @@ import './components/temperature-humidity';
 
 class ApplicationController extends HTMLElement {
   connectedCallback() {
-
     const handleVisibilityChange = () => {
       const videoPlayerElement = this.querySelector('video-player');
       if (document.hidden) {
@@ -27,15 +26,21 @@ class ApplicationController extends HTMLElement {
   }
 
   render() {
+    const currentUrl = new URL(window.location.href);
+    const videoFormat =
+      currentUrl.searchParams.get('video') || (this.isMobile() ? 'yuv' : 'h264');
+    const audioFormat =
+      currentUrl.searchParams.get('audio') || (this.isMobile() ? 'aac' : 'raw');
+
     this.innerHTML = `
-      <video-player type="${this.isMobile() ? 'yuv' : 'h264'}"></video-player>
-      <audio-player type="${this.isMobile() ? 'aac' : 'raw'}"></audio-player>
+      <video-player type="${videoFormat}"></video-player>
+      <audio-player type="${audioFormat}"></audio-player>
       <temperature-humidity id="temp-humidity"></temperature-humidity>
       <fullscreen-button id="fullscreen-button" class="app-icon"></fullscreen-button>
     `;
   }
 
-  isMobile(){
+  isMobile() {
     return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   }
 }
