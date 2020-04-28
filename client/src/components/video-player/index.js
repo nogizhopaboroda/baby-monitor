@@ -1,13 +1,9 @@
 import WebsocketStream from '../../websocket-stream';
+import {VIDEO_HEIGHT, VIDEO_WIDTH} from '../../config';
 import {
   H264Player,
   YUVPlayer,
 } from '../../video-player';
-
-
-const HOST = process.env.HOST || window.location.hostname;
-const VIDEO_HEIGHT = process.env.VIDEO_HEIGHT || 640;
-const VIDEO_WIDTH = process.env.VIDEO_WIDTH || 480;
 
 
 class VideoPlayerComponent extends HTMLElement {

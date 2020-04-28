@@ -1,9 +1,8 @@
 import {PCMPlayer, MSEPlayer} from '../../audio-player';
 import createVisualiser from '../../audio-player/visualiser';
 import {volumeUp, volumeDown} from '../../icons';
+import {AUDIO_SAMPLE_RATE, AUDIO_CHANNELS} from '../../config';
 
-const AUDIO_SAMPLE_RATE = process.env.AUDIO_SAMPLE_RATE || 16000;
-const AUDIO_CHANNELS = process.env.AUDIO_CHANNELS || 1;
 
 class AudioPlayerComponent extends HTMLElement {
 

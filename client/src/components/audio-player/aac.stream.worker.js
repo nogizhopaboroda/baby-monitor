@@ -1,8 +1,6 @@
 import WebsocketStream from '../../websocket-stream';
+import {HOST, AUDIO_STREAMER_WS_PORT} from '../../config';
 
-
-const HOST = process.env.HOST || self.location.hostname;
-const AUDIO_STREAMER_WS_PORT = process.env.AUDIO_STREAMER_WS_PORT || 8000;
 
 class AACAudioStream extends WebsocketStream {
   get url() {

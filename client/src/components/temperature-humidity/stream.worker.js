@@ -1,8 +1,6 @@
 import WebsocketStream from '../../websocket-stream';
+import {HOST, TEMP_HUMIDITY_STREAMER_WS_PORT} from '../../config';
 
-const HOST = process.env.HOST || window.location.hostname;
-const TEMP_HUMIDITY_STREAMER_WS_PORT =
-  process.env.TEMP_HUMIDITY_STREAMER_WS_PORT || 7000;
 
 class TempHumidityStream extends WebsocketStream {
   get url() {

@@ -1,8 +1,6 @@
 import WebsocketStream from '../../websocket-stream';
+import {HOST, RAW_VIDEO_STREAMER_WS_PORT} from '../../config';
 
-const HOST = process.env.HOST || window.location.hostname;
-const RAW_VIDEO_STREAMER_WS_PORT =
-  process.env.RAW_VIDEO_STREAMER_WS_PORT || 9001;
 
 class YUVVideoStream extends WebsocketStream {
   get url() {

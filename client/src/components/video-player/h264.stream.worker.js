@@ -1,8 +1,5 @@
 import WebsocketStream from '../../websocket-stream';
-
-
-const HOST = process.env.HOST || window.location.hostname;
-const VIDEO_STREAMER_WS_PORT = process.env.VIDEO_STREAMER_WS_PORT || 9000;
+import {HOST, VIDEO_STREAMER_WS_PORT} from '../../config';
 
 
 class H264VideoStream extends WebsocketStream {
