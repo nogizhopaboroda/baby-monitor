@@ -1,7 +1,7 @@
 import {PCMPlayer, MSEPlayer} from '../../audio-player';
 import createVisualiser from '../../audio-player/visualiser';
 import {volumeUp, volumeDown} from '../../icons';
-import {AUDIO_SAMPLE_RATE, AUDIO_CHANNELS} from '../../config';
+import {RAW_AUDIO_SAMPLE_RATE, AUDIO_CHANNELS} from '../../config';
 
 
 class AudioPlayerComponent extends HTMLElement {
@@ -24,7 +24,7 @@ class AudioPlayerComponent extends HTMLElement {
         this.player = new PCMPlayer({
           encoding: '16bitInt',
           channels: parseInt(AUDIO_CHANNELS),
-          sampleRate: parseInt(AUDIO_SAMPLE_RATE),
+          sampleRate: parseInt(RAW_AUDIO_SAMPLE_RATE),
         });
 
         this.stream = new Worker('./raw.stream.worker.js');
