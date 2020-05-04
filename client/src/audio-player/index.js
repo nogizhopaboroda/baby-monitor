@@ -1,6 +1,8 @@
 // taken from https://github.com/samirkumardas/pcm-player
 
 import NoiseGateNode from 'noise-gate';
+import createBuffer from 'audio-buffer-from';
+import format from 'audio-format';
 
 const dBFSToGain = dbfs => Math.pow(10, dbfs / 20);
 
@@ -18,6 +20,13 @@ export class PCMPlayer {
     this.options = {...defaults, ...option};
     this.maxValue = this.getMaxValue();
     this.typedArray = this.getTypedArray();
+
+    this.formatString = format.stringify({
+      endianness: 'le',
+      interleaved: true,
+      channels: this.options.channels,
+      sampleRate: this.options.sampleRate,
+    });
     this.createContext();
   }
 
@@ -109,36 +118,8 @@ export class PCMPlayer {
 
   flush(sample) {
     if (!sample.length) return;
-    let bufferSource = this.audioCtx.createBufferSource(),
-      length = sample.length / this.options.channels,
-      audioBuffer = this.audioCtx.createBuffer(
-        this.options.channels,
-        length,
-        this.options.sampleRate,
-      ),
-      audioData,
-      channel,
-      offset,
-      i,
-      decrement;
-
-    for (channel = 0; channel < this.options.channels; channel++) {
-      audioData = audioBuffer.getChannelData(channel);
-      offset = channel;
-      decrement = 50;
-      for (i = 0; i < length; i++) {
-        audioData[i] = sample[offset];
-        /* fadein */
-        if (i < 50) {
-          audioData[i] = (audioData[i] * i) / 50;
-        }
-        /* fadeout*/
-        if (i >= length - 51) {
-          audioData[i] = (audioData[i] * decrement--) / 50;
-        }
-        offset += this.options.channels;
-      }
-    }
+    const bufferSource = this.audioCtx.createBufferSource();
+    const audioBuffer = createBuffer(sample, this.formatString);
 
     bufferSource.buffer = audioBuffer;
     bufferSource.connect(this.mediaStreamDestination);
@@ -148,12 +129,14 @@ export class PCMPlayer {
 
 // taken from https://github.com/SamuelFisher/WebSocketAudio
 export class MSEPlayer {
-  constructor({ mimeType = 'audio/aac' } = {}) {
+  constructor({mimeType = 'audio/aac'} = {}) {
     this.audioElement = new Audio();
     this.audioElement.autoplay = true;
 
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    this.mediaStreamSource = this.audioCtx.createMediaElementSource(this.audioElement)
+    this.mediaStreamSource = this.audioCtx.createMediaElementSource(
+      this.audioElement,
+    );
 
     this.gainNode = this.audioCtx.createGain();
     this.gainNode.gain.value = 1;
@@ -180,7 +163,7 @@ export class MSEPlayer {
   onReady() {}
 
   feed(data) {
-    if(!this.isReady){
+    if (!this.isReady) {
       return;
     }
     this.queue.push(data);
