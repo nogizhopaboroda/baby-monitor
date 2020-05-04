@@ -1,59 +1,24 @@
-// taken from https://github.com/samirkumardas/pcm-player
-
 import NoiseGateNode from 'noise-gate';
 import createBuffer from 'audio-buffer-from';
 import format from 'audio-format';
 
-const dBFSToGain = dbfs => Math.pow(10, dbfs / 20);
-
 export class PCMPlayer {
   constructor(options) {
-    this.init(options);
-  }
-
-  init(option) {
     const defaults = {
       encoding: '16bitInt',
       channels: 1,
       sampleRate: 8000,
     };
-    this.options = {...defaults, ...option};
-    this.maxValue = this.getMaxValue();
-    this.typedArray = this.getTypedArray();
+    this.options = {...defaults, ...options};
 
     this.formatString = format.stringify({
+      type: 'int16',
       endianness: 'le',
       interleaved: true,
       channels: this.options.channels,
       sampleRate: this.options.sampleRate,
     });
     this.createContext();
-  }
-
-  getMaxValue() {
-    const encodings = {
-      '8bitInt': 128,
-      '16bitInt': 32768,
-      '32bitInt': 2147483648,
-      '32bitFloat': 1,
-    };
-
-    return encodings[this.options.encoding]
-      ? encodings[this.options.encoding]
-      : encodings['16bitInt'];
-  }
-
-  getTypedArray() {
-    const typedArrays = {
-      '8bitInt': Int8Array,
-      '16bitInt': Int16Array,
-      '32bitInt': Int32Array,
-      '32bitFloat': Float32Array,
-    };
-
-    return typedArrays[this.options.encoding]
-      ? typedArrays[this.options.encoding]
-      : typedArrays['16bitInt'];
   }
 
   createContext() {
@@ -85,26 +50,8 @@ export class PCMPlayer {
     }
   }
 
-  isTypedArray(data) {
-    return (
-      data.byteLength && data.buffer && data.buffer.constructor == ArrayBuffer
-    );
-  }
-
   feed(data) {
-    if (!this.isTypedArray(data)) return;
-
-    this.flush(this.getFormatedValue(data));
-  }
-
-  getFormatedValue(data) {
-    const outputData = new this.typedArray(data.buffer);
-    const float32 = new Float32Array(data.length);
-
-    for (let i = 0; i < outputData.length; i++) {
-      float32[i] = outputData[i] / this.maxValue;
-    }
-    return float32;
+    this.play(data);
   }
 
   volume(volume) {
@@ -116,10 +63,9 @@ export class PCMPlayer {
     this.audioCtx = null;
   }
 
-  flush(sample) {
-    if (!sample.length) return;
+  play(data) {
     const bufferSource = this.audioCtx.createBufferSource();
-    const audioBuffer = createBuffer(sample, this.formatString);
+    const audioBuffer = createBuffer(data, this.formatString);
 
     bufferSource.buffer = audioBuffer;
     bufferSource.connect(this.mediaStreamDestination);

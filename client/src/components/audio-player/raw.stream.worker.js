@@ -10,6 +10,10 @@ class RawAudioStream extends WebsocketStream {
   onOpen() {
     console.log('Connected to raw audio stream');
   }
+
+  processData(data) {
+    return data;
+  }
 }
 
 const rawAudioStream = new RawAudioStream({
