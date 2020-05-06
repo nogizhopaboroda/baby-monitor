@@ -1,11 +1,11 @@
 import NoiseGateNode from 'noise-gate';
-import createBuffer from 'audio-buffer-from';
 import format from 'audio-format';
+import convert from 'pcm-convert';
 
 export class PCMPlayer {
   constructor(options) {
     const defaults = {
-      encoding: '16bitInt',
+      encoding: 'int16',
       channels: 1,
       sampleRate: 8000,
     };
@@ -50,10 +50,6 @@ export class PCMPlayer {
     }
   }
 
-  feed(data) {
-    this.play(data);
-  }
-
   volume(volume) {
     this.gainNode.gain.value = volume;
   }
@@ -63,10 +59,32 @@ export class PCMPlayer {
     this.audioCtx = null;
   }
 
-  play(data) {
-    const bufferSource = this.audioCtx.createBufferSource();
-    const audioBuffer = createBuffer(data, this.formatString);
+  feed(data) {
+    const source = convert(data, this.formatString, 'float32');
 
+    const channels = this.options.channels;
+    const length = Math.floor(source.length / channels);
+    const channelsData = [];
+    for (let channel = 0; channel < channels; channel++) {
+      channelsData[channel] = source.subarray(channel * length, (channel + 1) * length);
+    }
+
+    this.play(channelsData);
+  }
+
+  play(channelsData) {
+    const length = channelsData[0].length;
+    const audioBuffer = this.audioCtx.createBuffer(
+      this.options.channels,
+      length,
+      this.options.sampleRate,
+    );
+
+    for (let channel = 0; channel < channelsData.length; channel++) {
+      audioBuffer.getChannelData(channel).set(channelsData[channel]);
+    }
+
+    const bufferSource = this.audioCtx.createBufferSource();
     bufferSource.buffer = audioBuffer;
     bufferSource.connect(this.mediaStreamDestination);
     bufferSource.start(this.audioCtx.currentTime);

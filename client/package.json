@@ -13,10 +13,10 @@
     "parcel": "^1.12.4"
   },
   "dependencies": {
-    "audio-buffer-from": "^1.1.1",
     "audio-format": "^2.3.2",
     "noise-gate": "0.0.3",
     "nosleep.js": "^0.9.0",
+    "pcm-convert": "^1.6.5",
     "tinyh264": "^0.0.5",
     "yuv-buffer": "^1.0.0",
     "yuv-canvas": "^1.2.6"
