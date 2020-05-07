@@ -29,7 +29,7 @@ class AudioPlayerComponent extends HTMLElement {
 
         this.stream = new Worker('./raw.stream.worker.js');
         this.stream.addEventListener('message', ({data}) =>
-          this.player.feed(data),
+          this.player.play(data),
         );
         break;
     }
