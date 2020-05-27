@@ -18,6 +18,11 @@ export class PCMPlayer {
       channels: this.options.channels,
       sampleRate: this.options.sampleRate,
     });
+
+    this.frameSize = 256;
+    this.maxBufferSize = this.frameSize * 48;
+    this.audioDataFloat = (new Array(this.options.channels)).fill([]);
+
     this.createContext();
   }
 
@@ -33,6 +38,31 @@ export class PCMPlayer {
     this.gainNode.gain.value = 1;
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
+
+    this.generator = this.audioCtx.createScriptProcessor(this.frameSize, this.options.channels, this.options.channels);
+
+    this.generator.onaudioprocess = ({ outputBuffer }) => {
+
+      for (let channel = 0; channel < this.options.channels; channel++) {
+        const buf = this.audioDataFloat[channel].splice(0, this.frameSize);
+        if (!buf.length) {
+          const inputBuffer = new Float32Array(this.frameSize);
+          outputBuffer.getChannelData(channel).set(inputBuffer);
+          return;
+        }
+        const inputBuffer = new Float32Array(buf);
+
+        outputBuffer.getChannelData(channel).set(inputBuffer);
+
+        if (this.audioDataFloat[channel].length > this.maxBufferSize) {
+          console.log('flushing buffer');
+          this.audioDataFloat = (new Array(this.options.channels)).fill([]);
+        }
+      }
+    };
+
+
+    this.generator.connect(this.mediaStreamDestination);
 
     this.mediaStreamSource.connect(this.gainNode);
     this.gainNode.connect(this.audioCtx.destination);
@@ -66,28 +96,22 @@ export class PCMPlayer {
     const length = Math.floor(source.length / channels);
     const channelsData = [];
     for (let channel = 0; channel < channels; channel++) {
-      channelsData[channel] = source.subarray(channel * length, (channel + 1) * length);
+      channelsData[channel] = source.subarray(
+        channel * length,
+        (channel + 1) * length,
+      );
     }
 
     this.play(channelsData);
   }
 
   play(channelsData) {
-    const length = channelsData[0].length;
-    const audioBuffer = this.audioCtx.createBuffer(
-      this.options.channels,
-      length,
-      this.options.sampleRate,
-    );
-
     for (let channel = 0; channel < channelsData.length; channel++) {
-      audioBuffer.getChannelData(channel).set(channelsData[channel]);
+      for (let i = 0; i < channelsData[channel].length; i++) {
+        this.audioDataFloat[channel].push(channelsData[channel][i]);
+      }
     }
-
-    const bufferSource = this.audioCtx.createBufferSource();
-    bufferSource.buffer = audioBuffer;
-    bufferSource.connect(this.mediaStreamDestination);
-    bufferSource.start(this.audioCtx.currentTime);
+    return;
   }
 }
 
