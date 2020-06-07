@@ -28,9 +28,9 @@ class ApplicationController extends HTMLElement {
   render() {
     const currentUrl = new URL(window.location.href);
     const videoFormat =
-      currentUrl.searchParams.get('video') || (this.isMobile() ? 'yuv' : 'h264');
-    const audioFormat =
-      currentUrl.searchParams.get('audio') || (this.isMobile() ? 'aac' : 'raw');
+      currentUrl.searchParams.get('video') ||
+      (this.isMobile() ? 'yuv' : 'h264');
+    const audioFormat = currentUrl.searchParams.get('audio') || 'raw';
 
     this.innerHTML = `
       <video-player type="${videoFormat}"></video-player>
@@ -38,6 +38,16 @@ class ApplicationController extends HTMLElement {
       <temperature-humidity id="temp-humidity"></temperature-humidity>
       <fullscreen-button id="fullscreen-button" class="app-icon"></fullscreen-button>
     `;
+
+    const resumeAudioContext = () => {
+      this.querySelector('audio-player')
+        .player.audioCtx.resume()
+        .then(() => console.log('audio context resumed'))
+        .catch(e => alert(e));
+      this.removeEventListener('click', resumeAudioContext);
+    };
+
+    this.addEventListener('click', resumeAudioContext);
   }
 
   isMobile() {
