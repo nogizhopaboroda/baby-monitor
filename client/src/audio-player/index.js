@@ -19,8 +19,6 @@ export class PCMPlayer {
       sampleRate: this.options.sampleRate,
     });
 
-    this.frameSize = 256;
-    this.maxBufferSize = this.frameSize * 48;
     this.audioDataFloat = (new Array(this.options.channels)).fill([]);
 
     this.createContext();
@@ -39,14 +37,17 @@ export class PCMPlayer {
 
     this.noiseGate = new NoiseGateNode(this.audioCtx);
 
-    this.generator = this.audioCtx.createScriptProcessor(this.frameSize, this.options.channels, this.options.channels);
+    this.generator = this.audioCtx.createScriptProcessor(this.options.bufferSize, this.options.channels, this.options.channels);
+
+    const bufferSize = this.generator.bufferSize;
+    const maxBufferSize = bufferSize * 48;
 
     this.generator.onaudioprocess = ({ outputBuffer }) => {
 
       for (let channel = 0; channel < this.options.channels; channel++) {
-        const buf = this.audioDataFloat[channel].splice(0, this.frameSize);
+        const buf = this.audioDataFloat[channel].splice(0, bufferSize);
         if (!buf.length) {
-          const inputBuffer = new Float32Array(this.frameSize);
+          const inputBuffer = new Float32Array(bufferSize);
           outputBuffer.getChannelData(channel).set(inputBuffer);
           return;
         }
@@ -54,7 +55,7 @@ export class PCMPlayer {
 
         outputBuffer.getChannelData(channel).set(inputBuffer);
 
-        if (this.audioDataFloat[channel].length > this.maxBufferSize) {
+        if (this.audioDataFloat[channel].length > maxBufferSize) {
           console.log('flushing buffer');
           this.audioDataFloat = (new Array(this.options.channels)).fill([]);
         }

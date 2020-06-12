@@ -31,10 +31,11 @@ class ApplicationController extends HTMLElement {
       currentUrl.searchParams.get('video') ||
       (this.isMobile() ? 'yuv' : 'h264');
     const audioFormat = currentUrl.searchParams.get('audio') || 'raw';
+    const audioBufferSize = currentUrl.searchParams.get('audio-buffer-size');
 
     this.innerHTML = `
       <video-player type="${videoFormat}"></video-player>
-      <audio-player type="${audioFormat}"></audio-player>
+      <audio-player type="${audioFormat}" buffer-size=${audioBufferSize}></audio-player>
       <temperature-humidity id="temp-humidity"></temperature-humidity>
       <fullscreen-button id="fullscreen-button" class="app-icon"></fullscreen-button>
     `;
