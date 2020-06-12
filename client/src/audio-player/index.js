@@ -22,6 +22,10 @@ export class PCMPlayer {
     this.audioDataFloat = (new Array(this.options.channels)).fill([]);
 
     this.createContext();
+
+    if(this.options.filtering){
+      this.setFiltering();
+    }
   }
 
   createContext() {

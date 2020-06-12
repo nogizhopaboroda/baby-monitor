@@ -9,6 +9,7 @@ class AudioPlayerComponent extends HTMLElement {
   connectedCallback() {
     this.type = this.getAttribute('type');
     this.bufferSize = parseInt(this.getAttribute('buffer-size')) || null;
+    this.filtering = this.hasAttribute('filtering');
 
     switch (this.type) {
       case 'aac':
@@ -27,6 +28,7 @@ class AudioPlayerComponent extends HTMLElement {
           channels: parseInt(AUDIO_CHANNELS),
           sampleRate: parseInt(RAW_AUDIO_SAMPLE_RATE),
           bufferSize: this.bufferSize,
+          filtering: this.filtering,
         });
 
         this.stream = new Worker('./raw.stream.worker.js');
