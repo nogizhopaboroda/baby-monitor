@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-alpine
+FROM arm32v7/alpine
 
 # Set env variables
 
@@ -57,8 +57,8 @@ ENV TEMP_HUMIDITY_STREAMER_WS_PORT=7000
 ENV TEMP_HUMIDITY_STREAMER_TCP_PORT=1000
 
 RUN apk update && apk add \
-    git g++ gcc libgcc libstdc++ linux-headers make git \
-    python py-pip python-dev \
+    git g++ gcc libgcc libstdc++ linux-headers make curl \
+    python2 py-pip python2-dev py2-setuptools \
     raspberrypi \
     alsa-utils faac ffmpeg \
     tmux htop
