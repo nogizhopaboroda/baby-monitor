@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-alpine-node
+FROM arm32v7/node:alpine
 
 ENV WORKDIR /app
 
