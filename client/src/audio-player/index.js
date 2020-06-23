@@ -19,17 +19,10 @@ export class PCMPlayer {
       sampleRate: this.options.sampleRate,
     });
 
-    this.audioDataFloat = (new Array(this.options.channels)).fill([]);
+    this.audioDataFloat = new Array(this.options.channels).fill([]);
 
     this.createContext();
 
-    if(this.options.filtering){
-      this.setFiltering();
-    }
-  }
-
-  createContext() {
-    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     this.mediaStreamDestination = this.audioCtx.createMediaStreamDestination();
     this.mediaStreamSource = this.audioCtx.createMediaStreamSource(
       this.mediaStreamDestination.stream,
@@ -39,13 +32,16 @@ export class PCMPlayer {
 
     this.gainNode.gain.value = 1;
 
-    this.generator = this.audioCtx.createScriptProcessor(this.options.bufferSize, this.options.channels, this.options.channels);
+    this.generator = this.audioCtx.createScriptProcessor(
+      this.options.bufferSize,
+      this.options.channels,
+      this.options.channels,
+    );
 
     const bufferSize = this.generator.bufferSize;
     const maxBufferSize = bufferSize * 48;
 
-    this.generator.onaudioprocess = ({ outputBuffer }) => {
-
+    this.generator.onaudioprocess = ({outputBuffer}) => {
       for (let channel = 0; channel < this.options.channels; channel++) {
         const buf = this.audioDataFloat[channel].splice(0, bufferSize);
         if (!buf.length) {
@@ -59,32 +55,21 @@ export class PCMPlayer {
 
         if (this.audioDataFloat[channel].length > maxBufferSize) {
           console.log('flushing buffer');
-          this.audioDataFloat = (new Array(this.options.channels)).fill([]);
+          this.audioDataFloat = new Array(this.options.channels).fill([]);
         }
       }
     };
 
-
     this.generator.connect(this.mediaStreamDestination);
 
-    this.mediaStreamSource.connect(this.gainNode);
-    this.gainNode.connect(this.audioCtx.destination);
+    const start = this.options.filtering
+      ? this.generator.connect(new NoiseGateNode(this.audioCtx))
+      : this.generator;
+    start.connect(this.gainNode).connect(this.audioCtx.destination);
   }
 
-  setFiltering(state = true) {
-    if (state) {
-      this.noiseGate = new NoiseGateNode(this.audioCtx);
-
-      this.gainNode.disconnect(this.audioCtx.destination);
-      this.gainNode.connect(this.noiseGate);
-      this.noiseGate.connect(this.audioCtx.destination);
-    } else {
-      this.noiseGate = null;
-
-      this.gainNode.disconnect(this.noiseGate);
-      this.noiseGate.disconnect(this.audioCtx.destination);
-      this.gainNode.connect(this.audioCtx.destination);
-    }
+  createContext() {
+    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 
   volume(volume) {
