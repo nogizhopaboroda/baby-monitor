@@ -39,8 +39,6 @@ export class PCMPlayer {
 
     this.gainNode.gain.value = 1;
 
-    this.noiseGate = new NoiseGateNode(this.audioCtx);
-
     this.generator = this.audioCtx.createScriptProcessor(this.options.bufferSize, this.options.channels, this.options.channels);
 
     const bufferSize = this.generator.bufferSize;
@@ -75,10 +73,14 @@ export class PCMPlayer {
 
   setFiltering(state = true) {
     if (state) {
+      this.noiseGate = new NoiseGateNode(this.audioCtx);
+
       this.gainNode.disconnect(this.audioCtx.destination);
       this.gainNode.connect(this.noiseGate);
       this.noiseGate.connect(this.audioCtx.destination);
     } else {
+      this.noiseGate = null;
+
       this.gainNode.disconnect(this.noiseGate);
       this.noiseGate.disconnect(this.audioCtx.destination);
       this.gainNode.connect(this.audioCtx.destination);
